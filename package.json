@@ -1,0 +1,16 @@
+{
+  "name": "resqintel-ai",
+  "version": "1.0.0",
+  "description": "ResQIntel AI: Multimodal, Multi-Agent Emergency Response Intelligence Platform",
+  "private": true,
+  "scripts": {
+    "start": "python scripts/launch_desktop.py",
+    "app:offline": "python scripts/launch_desktop.py",
+    "desktop": "python scripts/launch_desktop.py",
+    "electron": "cd frontend && npx electron ../electron/main.cjs",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "python -m uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000",
+    "build": "cd frontend && npm run build",
+    "test": "pytest backend/tests/ -v"
+  }
+}
