@@ -82,111 +82,312 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
             <ShieldAlert className="w-6 h-6 text-ivory-100" />
           </Link>
 
-          {/* Navigation Icon Stack */}
+          {/* Navigation Icon Stack - Dynamically Filtered by Active Role */}
           <nav className="flex flex-col items-center gap-3">
-            {/* Live GIS Tactical Map */}
-            <Link
-              to="/map"
-              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
-                isActive('/map')
-                  ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
-                  : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
-              }`}
-              title={t('navLiveMap', 'GIS Tactical Map')}
-            >
-              <Compass className="w-5 h-5" />
-            </Link>
+            {/* CITIZEN Role Views */}
+            {user?.role === 'CITIZEN' && (
+              <>
+                <Link
+                  to="/citizen"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/citizen')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navCitizenPortal', 'Citizen Portal')}
+                >
+                  <Users className="w-5 h-5" />
+                </Link>
 
-            {/* Dispatcher Command Center */}
-            <Link
-              to="/dispatcher"
-              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
-                isActive('/dispatcher')
-                  ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
-                  : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
-              }`}
-              title={t('navCommandCenter', 'Command Center')}
-            >
-              <Radio className="w-5 h-5" />
-            </Link>
+                <Link
+                  to="/report"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/report')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navReportForm', 'Report Incident')}
+                >
+                  <ShieldAlert className="w-5 h-5" />
+                </Link>
 
-            {/* Emergency Fleet & Logistics */}
-            <Link
-              to="/resources"
-              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
-                isActive('/resources')
-                  ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
-                  : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
-              }`}
-              title={t('navResources', 'Fleet & Resources')}
-            >
-              <Truck className="w-5 h-5" />
-            </Link>
+                <Link
+                  to="/sos"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/sos')
+                      ? 'bg-red-700 text-ivory-50 shadow-md border border-red-500/40'
+                      : 'text-red-400 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title="Instant SOS Distress"
+                >
+                  <Radio className="w-5 h-5" />
+                </Link>
+              </>
+            )}
 
-            {/* Crisis SITREP & Intelligence */}
-            <Link
-              to="/sitrep"
-              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
-                isActive('/sitrep')
-                  ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
-                  : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
-              }`}
-              title={t('navAnalytics', 'SITREP & Reports')}
-            >
-              <FileText className="w-5 h-5" />
-            </Link>
+            {/* DISPATCHER Role Views */}
+            {user?.role === 'DISPATCHER' && (
+              <>
+                <Link
+                  to="/dispatcher"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/dispatcher')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navCommandCenter', 'Command Center')}
+                >
+                  <Radio className="w-5 h-5" />
+                </Link>
 
-            {/* Intelligence Analytics */}
-            <Link
-              to="/analyst"
-              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
-                isActive('/analyst')
-                  ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
-                  : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
-              }`}
-              title="Analytics Telemetry"
-            >
-              <BarChart3 className="w-5 h-5" />
-            </Link>
+                <Link
+                  to="/map"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/map')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navLiveMap', 'GIS Tactical Map')}
+                >
+                  <Compass className="w-5 h-5" />
+                </Link>
 
-            {/* External Datasets & ML Registry */}
-            <Link
-              to="/datasets"
-              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
-                isActive('/datasets')
-                  ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
-                  : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
-              }`}
-              title={t('navDataSources', 'Data Feeds & Model Registry')}
-            >
-              <Database className="w-5 h-5" />
-            </Link>
+                <Link
+                  to="/resources"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/resources')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navResources', 'Fleet & Resources')}
+                >
+                  <Truck className="w-5 h-5" />
+                </Link>
 
-            {/* Admin & Audit */}
-            <Link
-              to="/admin"
-              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
-                isActive('/admin')
-                  ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
-                  : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
-              }`}
-              title={t('navAdmin', 'System Administration')}
-            >
-              <Users className="w-5 h-5" />
-            </Link>
+                <Link
+                  to="/sitrep"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/sitrep')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navAnalytics', 'SITREP & Reports')}
+                >
+                  <FileText className="w-5 h-5" />
+                </Link>
 
-            {/* System Health */}
-            <Link
-              to="/health"
-              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
-                isActive('/health')
-                  ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
-                  : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
-              }`}
-              title={t('navSystemHealth', 'System Health Telemetry')}
-            >
-              <Activity className="w-5 h-5" />
-            </Link>
+                <Link
+                  to="/analyst"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/analyst')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title="Analytics Telemetry"
+                >
+                  <BarChart3 className="w-5 h-5" />
+                </Link>
+              </>
+            )}
+
+            {/* RESPONDER Role Views */}
+            {user?.role === 'RESPONDER' && (
+              <>
+                <Link
+                  to="/responder"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/responder')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navFieldDuty', 'Field Duty Assignments')}
+                >
+                  <ShieldAlert className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  to="/map"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/map')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navLiveMap', 'Tactical Routing Map')}
+                >
+                  <Compass className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  to="/resources"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/resources')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navResources', 'Fleet & Staging')}
+                >
+                  <Truck className="w-5 h-5" />
+                </Link>
+              </>
+            )}
+
+            {/* ANALYST Role Views */}
+            {user?.role === 'ANALYST' && (
+              <>
+                <Link
+                  to="/analyst"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/analyst')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title="Intelligence Telemetry"
+                >
+                  <BarChart3 className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  to="/map"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/map')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navLiveMap', 'Hazard Spatial Corroboration')}
+                >
+                  <Compass className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  to="/sitrep"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/sitrep')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navAnalytics', 'SITREP & Reports')}
+                >
+                  <FileText className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  to="/datasets"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/datasets')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navDataSources', 'Data Feeds & Model Registry')}
+                >
+                  <Database className="w-5 h-5" />
+                </Link>
+              </>
+            )}
+
+            {/* ADMIN Role Views */}
+            {user?.role === 'ADMIN' && (
+              <>
+                <Link
+                  to="/admin"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/admin')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navAdmin', 'System Administration')}
+                >
+                  <Users className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  to="/health"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/health')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navSystemHealth', 'System Health Telemetry')}
+                >
+                  <Activity className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  to="/dispatcher"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/dispatcher')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navCommandCenter', 'Command Center')}
+                >
+                  <Radio className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  to="/map"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/map')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navLiveMap', 'GIS Tactical Map')}
+                >
+                  <Compass className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  to="/datasets"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/datasets')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navDataSources', 'Data Feeds & Model Registry')}
+                >
+                  <Database className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  to="/resources"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/resources')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navResources', 'Fleet & Resources')}
+                >
+                  <Truck className="w-5 h-5" />
+                </Link>
+              </>
+            )}
+
+            {/* Fallback for unauthenticated or general view */}
+            {!user && (
+              <>
+                <Link
+                  to="/map"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/map')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navLiveMap', 'GIS Tactical Map')}
+                >
+                  <Compass className="w-5 h-5" />
+                </Link>
+                <Link
+                  to="/dispatcher"
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center transition-all ${
+                    isActive('/dispatcher')
+                      ? 'bg-forest-700 text-ivory-50 shadow-md border border-forest-500/40'
+                      : 'text-sage-300 hover:text-ivory-50 hover:bg-forest-900'
+                  }`}
+                  title={t('navCommandCenter', 'Command Center')}
+                >
+                  <Radio className="w-5 h-5" />
+                </Link>
+              </>
+            )}
           </nav>
         </div>
 
