@@ -37,7 +37,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-reference-canvas dark:bg-reference-darkCanvas text-reference-textMain dark:text-reference-darkTextMain flex flex-col font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-ivory-100 dark:bg-forest-950 text-forest-950 dark:text-ivory-100 flex flex-col font-sans transition-colors duration-200">
       <OfflineBanner />
       
       <AppLayout onToggleCopilot={() => setCopilotOpen(!copilotOpen)}>
