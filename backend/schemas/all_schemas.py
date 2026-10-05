@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List, Any, Dict
+from typing import Optional, List, Any, Dict, Union
 from pydantic import BaseModel, EmailStr, Field
 
 # ----------------- AUTH SCHEMAS -----------------
@@ -48,10 +48,14 @@ class IncidentReportCreate(BaseModel):
     address: Optional[str] = None
     injuries_reported: Optional[int] = 0
     people_affected: Optional[int] = 0
-    hazards: Optional[str] = None
+    affected_people: Optional[int] = 0
+    injuries: Optional[int] = 0
+    hazards: Optional[Union[str, List[str]]] = None
     damage: Optional[str] = None
+    infrastructure_damage: Optional[str] = None
     submitter_name: Optional[str] = None
     submitter_phone: Optional[str] = None
+    reporter_phone: Optional[str] = None
     submitter_notes: Optional[str] = None
     is_anonymous: Optional[bool] = False
     voice_transcript: Optional[str] = None
@@ -158,3 +162,69 @@ class GeofenceAlertCreate(BaseModel):
     longitude: float
     radius_km: float = 5.0
     channel: str = "IN_APP"
+
+# ----------------- EMERGENCY PACKET SCHEMAS -----------------
+class EmergencyPacketCreate(BaseModel):
+    client_uuid: Optional[str] = None
+    incident_uuid: Optional[str] = None
+    emergency_type: Optional[str] = "SOS"
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    address: Optional[str] = None
+    battery_level: Optional[float] = None
+    connectivity_type: Optional[str] = "GOOD"
+    voice_transcript: Optional[str] = None
+    voice_audio_base64: Optional[str] = None
+    image_base64: Optional[str] = None
+    image_url: Optional[str] = None
+    video_url: Optional[str] = None
+    affected_people: Optional[int] = None
+    people_trapped: Optional[int] = None
+    injuries: Optional[int] = 0
+    is_trapped: Optional[bool] = False
+    water_level: Optional[str] = None
+    situation_summary: Optional[str] = None
+    audio_transcript: Optional[str] = None
+    device_mode: Optional[str] = None
+    hazards: Optional[Union[str, List[str]]] = None
+    damage: Optional[str] = None
+    reporter_name: Optional[str] = None
+    reporter_phone: Optional[str] = None
+    is_anonymous: Optional[bool] = False
+    notes: Optional[str] = None
+    is_offline_synced: Optional[bool] = False
+    sync_id: Optional[str] = None
+
+# ----------------- EXTERNAL SIGNALS SCHEMAS -----------------
+class ExternalSignalResponse(BaseModel):
+    id: str
+    source: str
+    source_type: str
+    title: str
+    description: Optional[str] = None
+    event_type: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    radius_km: float = 10.0
+    severity: str
+    published_at: datetime
+    retrieved_at: datetime
+    reference_url: Optional[str] = None
+    confidence: float
+    source_reliability: str
+    processing_status: str
+    correlated_incident_id: Optional[str] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class SituationIntelligenceQuery(BaseModel):
+    latitude: float
+    longitude: float
+    radius_km: Optional[float] = 50.0
+    include_weather: Optional[bool] = True
+    include_usgs: Optional[bool] = True
+    include_gdacs: Optional[bool] = True
+    include_news: Optional[bool] = True
+

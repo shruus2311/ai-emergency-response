@@ -55,12 +55,12 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
           message: 'Saved to local offline queue. Will sync when connection is restored.',
           offline: true,
         } as any;
-      } else if (endpoint === '/reports/sos') {
+      } else if (endpoint === '/reports/sos' || endpoint === '/reports/emergency-packet') {
         const payload = JSON.parse(options.body as string);
-        await enqueueOfflineOperation('SOS', 'SOS', payload);
+        await enqueueOfflineOperation('SOS', 'EMERGENCY_PACKET', payload);
         return {
           status: 'SOS_OFFLINE_QUEUED',
-          message: 'SOS cached in emergency offline buffer. Will broadcast on re-connect.',
+          message: 'Emergency distress packet cached in offline buffer. Will broadcast immediately upon reconnection.',
           offline: true,
         } as any;
       }
@@ -92,6 +92,7 @@ export const api = {
   reports: {
     submit: (reportData: any) => request<any>('/reports/submit', { method: 'POST', body: JSON.stringify(reportData) }),
     sos: (sosData: any) => request<any>('/reports/sos', { method: 'POST', body: JSON.stringify(sosData) }),
+    emergencyPacket: (packetData: any) => request<any>('/reports/emergency-packet', { method: 'POST', body: JSON.stringify(packetData) }),
     myReports: () => request<any[]>('/reports/my-reports'),
     upload: (file: File) => {
       const fd = new FormData();
@@ -111,6 +112,10 @@ export const api = {
     generateSitrep: (data: { incident_id: string; title?: string }) => request<any>('/ai/sitrep', { method: 'POST', body: JSON.stringify(data) }),
     getSitreps: (incidentId: string) => request<any[]>(`/ai/sitreps/${incidentId}`),
     getClusters: () => request<any[]>('/ai/clusters'),
+    situationIntelligence: (lat: number, lng: number, radius?: number) =>
+      request<any>(`/ai/situation-intelligence?latitude=${lat}&longitude=${lng}${radius ? `&radius_km=${radius}` : ''}`),
+    externalSignals: (limit?: number) => request<any[]>(`/ai/external-signals?limit=${limit || 50}`),
+    proactiveDetect: (lat: number, lng: number) => request<any>(`/ai/proactive-detect?latitude=${lat}&longitude=${lng}`, { method: 'POST' }),
   },
 
   resources: {
@@ -119,7 +124,7 @@ export const api = {
       return request<any[]>(`/resources/?${q}`);
     },
     create: (data: any) => request<any>('/resources/', { method: 'POST', body: JSON.stringify(data) }),
-    assign: (data: { incident_id: string; resource_id?: string; notes?: string }) =>
+    assign: (data: { incident_id: string; resource_id?: string; responder_id?: string; notes?: string }) =>
       request<any>('/resources/assign', { method: 'POST', body: JSON.stringify(data) }),
     updateAssignmentStatus: (assignmentId: string, status: string, notes?: string) =>
       request<any>(`/resources/assignments/${assignmentId}/status`, { method: 'PUT', body: JSON.stringify({ status, notes }) }),
@@ -133,6 +138,8 @@ export const api = {
     myAssignment: () => request<any>('/responders/my-assignment'),
     heartbeat: (data: { status: string; latitude?: number; longitude?: number }) =>
       request<any>('/responders/heartbeat', { method: 'POST', body: JSON.stringify(data) }),
+    respondAssignment: (action: string, notes?: string) =>
+      request<any>(`/responders/respond-assignment?action=${encodeURIComponent(action)}${notes ? `&notes=${encodeURIComponent(notes)}` : ''}`, { method: 'POST' }),
   },
 
   map: {

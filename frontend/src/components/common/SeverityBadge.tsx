@@ -11,18 +11,18 @@ export const SeverityBadge: React.FC<Props> = ({ severity, score, showScore = tr
   const sev = (severity || 'MEDIUM').toUpperCase() as SeverityClass;
 
   const styles = {
-    CRITICAL: 'bg-red-950/80 text-red-300 border-red-500/60 shadow-[0_0_12px_rgba(239,68,68,0.25)]',
-    HIGH: 'bg-orange-950/80 text-orange-300 border-orange-500/60 shadow-[0_0_10px_rgba(249,115,22,0.2)]',
-    MEDIUM: 'bg-amber-950/80 text-amber-300 border-amber-500/60',
-    LOW: 'bg-blue-950/80 text-blue-300 border-blue-500/60',
-  }[sev] || 'bg-slate-800 text-slate-300 border-slate-600';
+    CRITICAL: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-950/80 dark:text-red-300 dark:border-red-500/60 shadow-sm',
+    HIGH: 'bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-950/80 dark:text-orange-300 dark:border-orange-500/60 shadow-sm',
+    MEDIUM: 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/80 dark:text-amber-300 dark:border-amber-500/60',
+    LOW: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-950/80 dark:text-blue-300 dark:border-blue-500/60',
+  }[sev] || 'bg-ivory-200 text-forest-800 border-ivory-400 dark:bg-forest-900 dark:text-sage-300 dark:border-forest-700';
 
   const dotColor = {
-    CRITICAL: 'bg-red-500 animate-pulse',
-    HIGH: 'bg-orange-500',
-    MEDIUM: 'bg-amber-400',
-    LOW: 'bg-blue-400',
-  }[sev] || 'bg-slate-400';
+    CRITICAL: 'bg-red-600 dark:bg-red-500 animate-pulse',
+    HIGH: 'bg-orange-600 dark:bg-orange-500',
+    MEDIUM: 'bg-amber-500 dark:bg-amber-400',
+    LOW: 'bg-blue-600 dark:bg-blue-400',
+  }[sev] || 'bg-forest-400 dark:bg-sage-400';
 
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wider border ${styles}`}>

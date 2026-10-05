@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, Polygon, Polyline, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Incident, Resource, Responder, Hospital, Shelter, RiskZone } from '../../types';
 
 // Custom CSS-based SVG icons to avoid missing png assets
@@ -71,6 +72,33 @@ function LocationPicker({ onSelect }: { onSelect: (lat: number, lng: number) => 
   return null;
 }
 
+function MapResizer() {
+  const map = useMapEvents({});
+  useEffect(() => {
+    map.invalidateSize();
+    const t1 = setTimeout(() => map.invalidateSize(), 150);
+    const t2 = setTimeout(() => map.invalidateSize(), 500);
+    const onResize = () => map.invalidateSize();
+    window.addEventListener('resize', onResize);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [map]);
+  return null;
+}
+
+function MapRecenter({ center, zoom }: { center?: [number, number]; zoom?: number }) {
+  const map = useMapEvents({});
+  useEffect(() => {
+    if (center && typeof center[0] === 'number' && typeof center[1] === 'number' && !isNaN(center[0]) && !isNaN(center[1])) {
+      map.flyTo(center, zoom || map.getZoom(), { duration: 0.8 });
+    }
+  }, [center?.[0], center?.[1], zoom]);
+  return null;
+}
+
 export const EmergencyMap: React.FC<Props> = ({
   center = [13.0827, 80.2707],
   zoom = 13,
@@ -100,18 +128,40 @@ export const EmergencyMap: React.FC<Props> = ({
     ? '&copy; <a href="https://carto.com/">CartoDB</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     : (env.VITE_MAP_ATTRIBUTION || '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors');
 
+  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   return (
-    <div style={{ height, width: '100%' }} className="relative rounded-xl overflow-hidden border border-slate-800 shadow-2xl z-0">
+    <div style={{ height, width: '100%' }} className="relative rounded-2xl overflow-hidden border border-ivory-300 dark:border-forest-800 shadow-md z-0">
+      {!isOnline && (
+        <div className="absolute top-3 left-14 z-[400] px-3 py-1 bg-forest-950/90 text-amber-300 border border-amber-600/80 rounded-full text-[11px] font-mono font-bold flex items-center gap-1.5 shadow-lg backdrop-blur-sm">
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+          <span>OFFLINE MAP ACTIVE • LOCAL GIS TELEMETRY</span>
+        </div>
+      )}
       <MapContainer
         center={center}
         zoom={zoom}
-        style={{ height: '100%', width: '100%', backgroundColor: '#090d16' }}
+        style={{ height: '100%', width: '100%', backgroundColor: '#0F2A20' }}
       >
         <TileLayer
           attribution={tileAttribution}
           url={tileUrl}
           maxZoom={19}
         />
+
+        <MapResizer />
+        <MapRecenter center={selectedLocation || center} zoom={zoom} />
 
         {selectableLocation && onSelectLocation && (
           <LocationPicker onSelect={onSelectLocation} />

@@ -1,0 +1,40 @@
+{
+  "name": "ResQIntel AI — Emergency Response Platform",
+  "short_name": "ResQIntel",
+  "description": "Offline-First Multimodal Emergency Response & Civilian SOS Intelligence Platform",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#F3F0E6",
+  "theme_color": "#173C2C",
+  "orientation": "portrait-primary",
+  "categories": ["government", "utilities", "safety"],
+  "icons": [
+    {
+      "src": "/shield.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick SOS Panic",
+      "short_name": "SOS",
+      "url": "/sos",
+      "description": "One-tap emergency distress signal"
+    },
+    {
+      "name": "Offline Disaster Mode",
+      "short_name": "Disaster",
+      "url": "/emergency",
+      "description": "Low-battery offline flood safety mode"
+    },
+    {
+      "name": "File Emergency Report",
+      "short_name": "Report",
+      "url": "/report",
+      "description": "Multimodal report with photo and voice audio"
+    }
+  ]
+}

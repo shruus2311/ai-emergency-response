@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Bell, Radio, AlertTriangle, Send, CheckCircle, MapPin, Clock } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export const NotificationsPage: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Geofence alert form state (Section 36)
+  // Geofence alert form state
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [hazardType, setHazardType] = useState('FLOOD');
@@ -22,8 +24,11 @@ export const NotificationsPage: React.FC = () => {
 
   const fetchNotifs = async () => {
     try {
+      setLoading(true);
       const data = await api.notifications.list();
       setNotifications(data);
+    } catch (e) {
+      console.error('Failed to load notifications:', e);
     } finally {
       setLoading(false);
     }
@@ -69,12 +74,13 @@ export const NotificationsPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
       
-      <div className="border-b border-slate-800 pb-4">
-        <span className="text-xs font-mono font-bold text-red-400 uppercase tracking-widest">
+      {/* Header */}
+      <div className="border-b border-ivory-300 dark:border-forest-800 pb-4">
+        <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-forest-100 text-forest-800 dark:bg-forest-900 dark:text-sage-300 border border-forest-200 dark:border-forest-700">
           Public Safety Alerts & Geofenced Warnings
         </span>
-        <h1 className="text-2xl font-extrabold text-white mt-1">
-          Notification Center & Crisis Broadcasting
+        <h1 className="text-2xl sm:text-3xl font-serif font-bold text-forest-950 dark:text-ivory-50 mt-1">
+          {t('navNotifications', 'Notification Center & Crisis Broadcasting')}
         </h1>
       </div>
 
@@ -83,15 +89,15 @@ export const NotificationsPage: React.FC = () => {
         {/* Left Column (2 Cols): Live Notifications Feed */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2">
-              <Bell className="w-4 h-4 text-red-400" />
+            <h2 className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider flex items-center gap-2">
+              <Bell className="w-4 h-4 text-forest-700 dark:text-sage-300" />
               Operational Alert Feed ({notifications.length})
             </h2>
           </div>
 
           <div className="space-y-3">
             {notifications.length === 0 ? (
-              <div className="bg-slate-900 border border-slate-800 rounded-xl p-8 text-center text-xs text-slate-500">
+              <div className="bg-white dark:bg-forest-900/60 border border-ivory-300 dark:border-forest-800 rounded-xl p-8 text-center text-xs text-forest-600 dark:text-sage-400">
                 No active broadcast notifications recorded.
               </div>
             ) : (
@@ -100,22 +106,24 @@ export const NotificationsPage: React.FC = () => {
                   key={n.id}
                   className={`p-4 rounded-xl border transition-all ${
                     n.is_read
-                      ? 'bg-slate-900/60 border-slate-800 text-slate-400'
-                      : 'bg-slate-900 border-red-900/60 text-slate-200 shadow-md'
+                      ? 'bg-ivory-100/60 dark:bg-forest-900/40 border-ivory-200 dark:border-forest-800 text-forest-700 dark:text-sage-400'
+                      : 'bg-white dark:bg-forest-900 border-forest-300 dark:border-forest-700 text-forest-950 dark:text-ivory-50 shadow-sm'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-                          n.severity === 'CRITICAL' ? 'bg-red-950 text-red-300 border border-red-700' : 'bg-yellow-950 text-yellow-300 border border-yellow-700'
+                          n.severity === 'CRITICAL' || n.severity === 'URGENT' 
+                            ? 'bg-red-100 text-red-900 border border-red-300 dark:bg-red-950 dark:text-red-300 dark:border-red-700' 
+                            : 'bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-700'
                         }`}>
                           {n.severity}
                         </span>
-                        <span className="font-bold text-xs text-white">{n.title}</span>
+                        <span className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50">{n.title}</span>
                       </div>
-                      <p className="text-xs text-slate-300 leading-relaxed">{n.message}</p>
-                      <div className="text-[10px] text-slate-500 font-mono flex items-center gap-2 pt-1">
+                      <p className="text-xs text-forest-800 dark:text-sage-200 leading-relaxed">{n.message}</p>
+                      <div className="text-[10px] text-forest-600 dark:text-sage-400 font-mono flex items-center gap-2 pt-1">
                         <Clock className="w-3 h-3" />
                         <span>{new Date(n.created_at).toLocaleString()}</span>
                         <span>• Channel: {n.channel}</span>
@@ -125,7 +133,7 @@ export const NotificationsPage: React.FC = () => {
                     {!n.is_read && (
                       <button
                         onClick={() => handleMarkRead(n.id)}
-                        className="text-[11px] text-slate-400 hover:text-white px-2 py-1 rounded bg-slate-800 border border-slate-700 whitespace-nowrap"
+                        className="text-[11px] text-forest-800 dark:text-sage-200 hover:bg-ivory-200 dark:hover:bg-forest-800 px-2.5 py-1 rounded bg-ivory-100 dark:bg-forest-950 border border-ivory-300 dark:border-forest-700 whitespace-nowrap transition-colors"
                       >
                         Mark Read
                       </button>
@@ -137,57 +145,57 @@ export const NotificationsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column (1 Col): Broadcast Geofenced Alert (Dispatcher / Admin only) */}
+        {/* Right Column (1 Col): Broadcast Geofenced Alert */}
         <div className="space-y-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl space-y-4">
-            <div className="border-b border-slate-800 pb-2">
-              <span className="text-xs font-bold text-white uppercase tracking-wider font-mono flex items-center gap-1.5">
-                <Radio className="w-4 h-4 text-red-500" />
+          <div className="bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4">
+            <div className="border-b border-ivory-200 dark:border-forest-800 pb-2">
+              <span className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider flex items-center gap-1.5">
+                <Radio className="w-4 h-4 text-forest-700 dark:text-sage-300" />
                 Define Geofenced Warning Zone
               </span>
-              <p className="text-[11px] text-slate-400 mt-0.5">
-                Section 36: Transmits alerts to all civilians and assets situated within perimeter.
+              <p className="text-[11px] text-forest-600 dark:text-sage-400 mt-0.5">
+                Transmits alerts to all civilians and assets situated within perimeter.
               </p>
             </div>
 
             {broadcastSuccess && (
-              <div className="p-3 bg-emerald-950 border border-emerald-800 rounded-lg text-xs text-emerald-200">
+              <div className="p-3 bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-800 rounded-lg text-xs text-emerald-900 dark:text-emerald-200">
                 {broadcastSuccess}
               </div>
             )}
 
             <form onSubmit={handleBroadcastAlert} className="space-y-3 text-xs">
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Alert Title</label>
+                <label className="block text-forest-800 dark:text-sage-300 font-semibold mb-1">Alert Title</label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. FLASH FLOOD EVACUATION ORDER"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white"
+                  className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-700 rounded-lg p-2 text-forest-950 dark:text-white focus:outline-none focus:ring-1 focus:ring-forest-600"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Advisory Message</label>
+                <label className="block text-forest-800 dark:text-sage-300 font-semibold mb-1">Advisory Message</label>
                 <textarea
                   rows={3}
                   required
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Mandatory evacuation for residents within 5km of River basin..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white"
+                  className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-700 rounded-lg p-2 text-forest-950 dark:text-white focus:outline-none focus:ring-1 focus:ring-forest-600"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Hazard Type</label>
+                  <label className="block text-forest-800 dark:text-sage-300 font-semibold mb-1">Hazard Type</label>
                   <select
                     value={hazardType}
                     onChange={(e) => setHazardType(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white"
+                    className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-700 rounded-lg p-2 text-forest-950 dark:text-white focus:outline-none focus:ring-1 focus:ring-forest-600"
                   >
                     <option value="FLOOD">Flood</option>
                     <option value="FIRE">Wildfire</option>
@@ -197,14 +205,14 @@ export const NotificationsPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Radius (km)</label>
+                  <label className="block text-forest-800 dark:text-sage-300 font-semibold mb-1">Radius (km)</label>
                   <input
                     type="number"
                     step="0.5"
                     min="0.5"
                     value={radiusKm}
                     onChange={(e) => setRadiusKm(Number(e.target.value))}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white"
+                    className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-700 rounded-lg p-2 text-forest-950 dark:text-white focus:outline-none focus:ring-1 focus:ring-forest-600"
                   />
                 </div>
               </div>
@@ -212,7 +220,7 @@ export const NotificationsPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={broadcasting}
-                className="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-lg disabled:opacity-50"
+                className="w-full py-2.5 bg-forest-800 hover:bg-forest-900 dark:bg-forest-700 dark:hover:bg-forest-600 text-ivory-50 font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-50"
               >
                 <Radio className="w-4 h-4" />
                 <span>{broadcasting ? 'Broadcasting...' : 'Broadcast Emergency Advisory'}</span>

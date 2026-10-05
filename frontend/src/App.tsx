@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { Navbar } from './components/layout/Navbar';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { AppLayout } from './components/layout/AppLayout';
 import { OfflineBanner } from './components/common/OfflineBanner';
 import { CopilotDrawer } from './components/copilot/CopilotDrawer';
 
@@ -23,6 +25,7 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import { SystemHealthPage } from './pages/SystemHealthPage';
 import { SitrepPage } from './pages/SitrepPage';
 import { OfflineSyncPage } from './pages/OfflineSyncPage';
+import { EmergencyModePage } from './pages/EmergencyModePage';
 
 function AppContent() {
   const [copilotOpen, setCopilotOpen] = useState(false);
@@ -34,11 +37,10 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-red-500 selection:text-white">
+    <div className="min-h-screen bg-reference-canvas dark:bg-reference-darkCanvas text-reference-textMain dark:text-reference-darkTextMain flex flex-col font-sans transition-colors duration-200">
       <OfflineBanner />
-      <Navbar onToggleCopilot={() => setCopilotOpen(!copilotOpen)} />
-
-      <main className="flex-1">
+      
+      <AppLayout onToggleCopilot={() => setCopilotOpen(!copilotOpen)}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -48,6 +50,8 @@ function AppContent() {
           <Route path="/citizen" element={<CitizenDashboard />} />
           <Route path="/report" element={<ReportEmergencyPage />} />
           <Route path="/sos" element={<SOSPage />} />
+          <Route path="/emergency" element={<EmergencyModePage />} />
+          <Route path="/disaster-mode" element={<EmergencyModePage />} />
 
           {/* Operational Screens */}
           <Route path="/dispatcher" element={<DispatcherDashboard onOpenCopilot={handleOpenCopilot} />} />
@@ -66,7 +70,7 @@ function AppContent() {
           {/* Catch-all fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </main>
+      </AppLayout>
 
       {/* Global AI Copilot Drawer */}
       <CopilotDrawer
@@ -82,9 +86,13 @@ function AppContent() {
 export function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

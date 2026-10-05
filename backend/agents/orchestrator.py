@@ -11,6 +11,7 @@ from backend.agents.evidence_fusion_agent import EvidenceFusionAgent
 from backend.agents.conflict_agent import ConflictAgent
 from backend.agents.missing_info_agent import MissingInformationAgent
 from backend.agents.severity_agent import SeverityAgent
+from backend.agents.situation_intelligence_agent import SituationIntelligenceAgent
 from backend.agents.resource_agent import ResourceAgent
 from backend.agents.routing_agent import RoutingAgent
 from backend.agents.recommendation_agent import RecommendationAgent
@@ -255,6 +256,26 @@ class AgentOrchestrator:
             recommendations = []
             agent_executions.append({"agent_name": "RecommendationAgent", "status": "DEGRADED", "error": str(e)})
 
+        # 13. Situation Intelligence Agent (External live feeds fusion: USGS, GDACS, Weather, News)
+        try:
+            t0 = time.time()
+            sit_res = await SituationIntelligenceAgent.analyze_area_situation(
+                latitude=lat,
+                longitude=lng,
+                radius_km=30.0,
+                active_incidents=existing_incidents
+            )
+            agent_executions.append({
+                "agent_name": "SituationIntelligenceAgent",
+                "status": "COMPLETED",
+                "execution_ms": int((time.time() - t0) * 1000),
+                "prediction": f"Threat Level: {sit_res['threat_level']} ({sit_res['external_signals_count']} live signals)",
+                "model_version": "3.0.0"
+            })
+        except Exception as e:
+            sit_res = {"threat_level": "NOMINAL", "external_signals_count": 0, "signals": [], "potential_incidents": []}
+            agent_executions.append({"agent_name": "SituationIntelligenceAgent", "status": "DEGRADED", "error": str(e)})
+
         total_execution_ms = int((time.time() - start_time) * 1000)
 
         return {
@@ -268,7 +289,8 @@ class AgentOrchestrator:
             "clustering": clustering_res,
             "conflicts": conflict_res,
             "missing_information": missing_info_res,
-            "evidence": evidence_res.get("evidence", []),
+            "situation_intelligence": sit_res,
+            "evidence": evidence_res.get("evidence", []) + sit_res.get("signals", [])[:3],
             "severity": severity_res,
             "matched_resources": matched_resources,
             "primary_route": top_route,

@@ -2,13 +2,17 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ShieldAlert, Mic, MicOff, Camera, MapPin, Upload, 
-  CheckCircle, AlertCircle, Loader2, Sparkles, Navigation 
+  CheckCircle, AlertCircle, Loader2, Sparkles, Navigation,
+  Video
 } from 'lucide-react';
 import { api } from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
 import { EmergencyMap } from '../components/map/EmergencyMap';
+import { LiveCameraCaptureModal } from '../components/common/LiveCameraCaptureModal';
 
 export const ReportEmergencyPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // Form states
   const [incidentType, setIncidentType] = useState('Flood');
@@ -30,9 +34,10 @@ export const ReportEmergencyPage: React.FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  // Media upload
+  // Media upload & live camera
   const [mediaUrls, setMediaUrls] = useState<string[]>([]);
   const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [showLiveCamera, setShowLiveCamera] = useState(false);
 
   // Submission state & AI result
   const [submitting, setSubmitting] = useState(false);
@@ -56,7 +61,7 @@ export const ReportEmergencyPage: React.FC = () => {
           }
         },
         () => {
-          setError('Unable to retrieve device GPS. Please pinpoint your location on the map.');
+          setError(t('gpsError', 'Unable to retrieve device GPS. Please pinpoint your location on the map.'));
         }
       );
     }
@@ -96,7 +101,7 @@ export const ReportEmergencyPage: React.FC = () => {
           if (currentTranscript.trim()) {
             setVoiceTranscript(currentTranscript.trim());
             setDescription((prev) => (prev ? `${prev} ${currentTranscript.trim()}` : currentTranscript.trim()));
-            setVoiceStatus('Captured via Browser Speech Recognition (Client-side)');
+            setVoiceStatus('Captured via Browser Speech Recognition');
           }
         };
         recognition.onerror = () => {};
@@ -171,7 +176,7 @@ export const ReportEmergencyPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim()) {
-      setError('Please provide a description or voice note of the emergency.');
+      setError(t('descRequired', 'Please provide a description or voice note of the emergency.'));
       return;
     }
 
@@ -206,67 +211,67 @@ export const ReportEmergencyPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 font-sans">
+    <div className="max-w-3xl mx-auto px-4 py-6 font-sans">
       
       {/* Title */}
       <div className="mb-6">
-        <span className="text-xs font-mono font-bold text-red-400 uppercase tracking-widest">
-          Citizen Reporting Portal
+        <span className="text-xs font-mono font-bold text-forest-700 dark:text-sage-400 uppercase tracking-widest">
+          {t('navCitizenPortal', 'Civilian Emergency Portal')}
         </span>
-        <h1 className="text-2xl font-extrabold text-white flex items-center gap-2 mt-1">
-          <ShieldAlert className="w-6 h-6 text-red-500" />
-          Report an Emergency Incident
+        <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white font-serif flex items-center gap-2 mt-1">
+          <ShieldAlert className="w-6 h-6 text-forest-700 dark:text-sage-300" />
+          {t('reportEmergencyHeading', 'Report an Emergency Incident')}
         </h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Multimodal signals (text, speech, image, GPS) are immediately correlated by the Multi-Agent AI pipeline.
+        <p className="text-xs text-sage-800 dark:text-sage-400 mt-1 font-sans">
+          {t('multimodalSignalsDesc', 'Multimodal signals (text, speech, live camera, GPS) are immediately correlated by the Multi-Agent AI pipeline.')}
         </p>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-950/80 border border-red-700 rounded-xl text-xs text-red-300 flex items-center gap-3">
-          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+        <div className="mb-6 p-4 bg-red-50 dark:bg-forest-900 border border-red-300 dark:border-red-800 rounded text-xs text-red-800 dark:text-red-300 flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* AI Processing Success Modal / Card */}
       {aiResult ? (
-        <div className="bg-slate-900 border border-emerald-500/50 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
-          <div className="flex items-center gap-3 text-emerald-400">
+        <div className="bg-ivory-100 dark:bg-forest-900 border border-forest-300 dark:border-forest-700 rounded p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="flex items-center gap-3 text-forest-700 dark:text-sage-300">
             <CheckCircle className="w-8 h-8" />
             <div>
-              <h2 className="text-lg font-bold text-white">Emergency Report Received & Analyzed</h2>
-              <p className="text-xs text-slate-400">
-                Incident Number: <span className="font-mono text-white font-bold">{aiResult.incident_number}</span>
+              <h2 className="text-lg font-bold text-forest-950 dark:text-white font-serif">{t('reportReceivedAnalyzed', 'Emergency Report Received & Analyzed')}</h2>
+              <p className="text-xs text-sage-700 dark:text-sage-400">
+                {t('tableRef', 'Incident Number')}: <span className="font-mono text-forest-950 dark:text-white font-bold">{aiResult.incident_number}</span>
               </p>
             </div>
           </div>
 
-          <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3 text-xs">
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
-              <span className="text-slate-400 font-mono">OPERATIONAL STATUS:</span>
-              <span className="px-2 py-0.5 rounded bg-yellow-950 text-yellow-300 border border-yellow-700 font-bold uppercase tracking-wider">
-                PENDING HUMAN VERIFICATION
+          <div className="p-4 bg-ivory-50 dark:bg-forest-950 rounded border border-ivory-300 dark:border-forest-800 space-y-3 text-xs">
+            <div className="flex items-center justify-between border-b border-ivory-300 dark:border-forest-800 pb-2">
+              <span className="text-sage-600 dark:text-sage-400 font-mono">OPERATIONAL STATUS:</span>
+              <span className="px-2 py-0.5 rounded bg-amber-100 dark:bg-forest-850 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold uppercase tracking-wider">
+                {t('statusPending', 'PENDING HUMAN VERIFICATION')}
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <span className="text-slate-500">AI Classification:</span>
-                <div className="text-sm font-bold text-white">
+                <span className="text-sage-600 dark:text-sage-400">AI Classification:</span>
+                <div className="text-sm font-bold text-forest-950 dark:text-white">
                   {aiResult.orchestration_summary?.classification?.prediction}
                 </div>
               </div>
               <div>
-                <span className="text-slate-500">Assessed Severity:</span>
-                <div className="text-sm font-bold text-red-400">
+                <span className="text-sage-600 dark:text-sage-400">Assessed Severity:</span>
+                <div className="text-sm font-bold text-red-700 dark:text-red-400">
                   {aiResult.orchestration_summary?.severity?.severity_class} ({aiResult.orchestration_summary?.severity?.severity_score}/10)
                 </div>
               </div>
             </div>
 
-            <div className="text-slate-400 pt-2 border-t border-slate-800/80">
-              Clustering Correlation: <strong className="text-slate-200">{aiResult.clustering_decision}</strong>. 
+            <div className="text-sage-700 dark:text-sage-400 pt-2 border-t border-ivory-300 dark:border-forest-800">
+              Clustering Correlation: <strong className="text-forest-950 dark:text-slate-200">{aiResult.clustering_decision}</strong>. 
               Pipeline processed in {aiResult.orchestration_summary?.pipeline_time_ms} ms.
             </div>
           </div>
@@ -274,9 +279,9 @@ export const ReportEmergencyPage: React.FC = () => {
           <div className="flex gap-3">
             <button
               onClick={() => navigate(`/incidents/${aiResult.incident_id}`)}
-              className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-lg font-bold text-xs shadow-lg transition-colors"
+              className="flex-1 py-2.5 bg-forest-800 hover:bg-forest-700 text-ivory-50 rounded font-bold text-xs shadow transition-colors"
             >
-              View Full Incident Dossier & Map
+              {t('viewDossierMap', 'View Full Incident Dossier & Map')}
             </button>
             <button
               onClick={() => {
@@ -284,25 +289,25 @@ export const ReportEmergencyPage: React.FC = () => {
                 setDescription('');
                 setVoiceTranscript('');
               }}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold"
+              className="px-4 py-2.5 bg-ivory-200 dark:bg-forest-850 hover:bg-ivory-300 dark:hover:bg-forest-800 text-forest-900 dark:text-white rounded text-xs font-semibold border border-ivory-300 dark:border-forest-700 transition-colors"
             >
-              File Another Report
+              {t('fileAnotherReport', 'File Another Report')}
             </button>
           </div>
         </div>
       ) : (
         /* Report Submission Form */
-        <form onSubmit={handleSubmit} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="bg-ivory-100/90 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded p-6 sm:p-8 space-y-6 shadow-sm">
           
           {/* Emergency Type */}
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
-              Emergency Disaster Type
+            <label className="block text-xs font-bold text-forest-900 dark:text-sage-300 uppercase tracking-wider mb-2">
+              {t('tableHazard', 'Emergency Disaster Type')}
             </label>
             <select
               value={incidentType}
               onChange={(e) => setIncidentType(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+              className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded px-3 py-2 text-xs text-forest-950 dark:text-white focus:outline-none focus:border-forest-600"
             >
               <option value="Flood">Flood / Water Inundation</option>
               <option value="Fire">Fire & Smoke Plume</option>
@@ -321,22 +326,22 @@ export const ReportEmergencyPage: React.FC = () => {
           {/* Text Description + Voice Input */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                Emergency Situation Description
+              <label className="text-xs font-bold text-forest-900 dark:text-sage-300 uppercase tracking-wider">
+                {t('emergencyDesc', 'Emergency Situation Description')}
               </label>
               
               {/* Voice Record Button */}
               <button
                 type="button"
                 onClick={isRecording ? stopRecording : startRecording}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-semibold border transition-all ${
                   isRecording 
-                    ? 'bg-red-950 text-red-400 border-red-500 animate-pulse' 
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700'
+                    ? 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-400 border-red-500 animate-pulse' 
+                    : 'bg-ivory-200 dark:bg-forest-850 hover:bg-ivory-300 dark:hover:bg-forest-800 text-forest-900 dark:text-sage-300 border-ivory-300 dark:border-forest-700'
                 }`}
               >
-                {isRecording ? <MicOff className="w-3.5 h-3.5 text-red-500" /> : <Mic className="w-3.5 h-3.5 text-blue-400" />}
-                <span>{isRecording ? 'Stop Recording' : 'Voice Report (Speech-to-Text)'}</span>
+                {isRecording ? <MicOff className="w-3.5 h-3.5 text-red-600" /> : <Mic className="w-3.5 h-3.5 text-forest-700 dark:text-sage-400" />}
+                <span>{isRecording ? t('stopRecording', 'Stop Recording') : t('voiceReport', 'Voice Note (Speech-to-Text)')}</span>
               </button>
             </div>
 
@@ -345,19 +350,19 @@ export const ReportEmergencyPage: React.FC = () => {
               required
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="State what occurred, visible hazards, trapped people, and landmark references..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-red-500 font-sans leading-relaxed"
+              placeholder={t('descPlaceholder', 'State what occurred, visible hazards, trapped people, and landmark references...')}
+              className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded p-3 text-xs text-forest-950 dark:text-white placeholder-sage-500 focus:outline-none focus:border-forest-600 font-sans leading-relaxed"
             />
 
             {voiceTranscript && (
-              <div className="mt-2 p-2 bg-indigo-950/40 border border-indigo-800/40 rounded-lg text-xs text-indigo-200">
-                <span className="font-bold text-[10px] text-indigo-400 block font-mono">TRANSCRIBED VOICE TELEMETRY:</span>
+              <div className="mt-2 p-2 bg-sage-100 dark:bg-forest-850 border border-sage-300 dark:border-forest-700 rounded text-xs text-forest-900 dark:text-sage-200">
+                <span className="font-bold text-[10px] text-forest-800 dark:text-sage-300 block font-mono">TRANSCRIBED VOICE NOTE:</span>
                 "{voiceTranscript}"
               </div>
             )}
 
             {voiceStatus && (
-              <div className="mt-1.5 p-2 bg-slate-900 border border-slate-800 rounded-lg text-[11px] text-slate-400 font-mono">
+              <div className="mt-1.5 p-2 bg-ivory-200 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded text-[11px] text-sage-700 dark:text-sage-400 font-mono">
                 ℹ️ {voiceStatus}
               </div>
             )}
@@ -366,19 +371,62 @@ export const ReportEmergencyPage: React.FC = () => {
           {/* Location Capture & Interactive Pin Map */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-red-400" />
-                Incident Location Pin
+              <label className="text-xs font-bold text-forest-900 dark:text-sage-300 uppercase tracking-wider flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-forest-700 dark:text-sage-300" />
+                {t('incidentLocationPin', 'Incident GIS Location Pin')}
               </label>
 
               <button
                 type="button"
                 onClick={handleCaptureGPS}
-                className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 font-semibold"
+                className="flex items-center gap-1 text-xs text-forest-800 dark:text-sage-300 hover:underline font-semibold"
               >
                 <Navigation className="w-3.5 h-3.5" />
-                <span>Capture GPS</span>
+                <span>{t('captureGPS', 'Capture GPS')}</span>
               </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
+              <div>
+                <label className="block text-[11px] text-sage-600 dark:text-sage-400 font-mono mb-0.5">Latitude</label>
+                <input
+                  type="number"
+                  step="0.000001"
+                  value={latitude}
+                  onChange={async (e) => {
+                    const newLat = parseFloat(e.target.value) || 0;
+                    setLatitude(newLat);
+                    if (newLat && longitude) {
+                      try {
+                        const geo = await api.map.reverseGeocode(newLat, longitude);
+                        if (geo && geo.address) setAddress(geo.address);
+                      } catch {}
+                    }
+                  }}
+                  placeholder="e.g. 18.5204"
+                  className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded px-3 py-1.5 text-xs text-forest-950 dark:text-white font-mono focus:outline-none focus:border-forest-600"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] text-sage-600 dark:text-sage-400 font-mono mb-0.5">Longitude</label>
+                <input
+                  type="number"
+                  step="0.000001"
+                  value={longitude}
+                  onChange={async (e) => {
+                    const newLng = parseFloat(e.target.value) || 0;
+                    setLongitude(newLng);
+                    if (latitude && newLng) {
+                      try {
+                        const geo = await api.map.reverseGeocode(latitude, newLng);
+                        if (geo && geo.address) setAddress(geo.address);
+                      } catch {}
+                    }
+                  }}
+                  placeholder="e.g. 73.8567"
+                  className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded px-3 py-1.5 text-xs text-forest-950 dark:text-white font-mono focus:outline-none focus:border-forest-600"
+                />
+              </div>
             </div>
 
             <input
@@ -386,46 +434,48 @@ export const ReportEmergencyPage: React.FC = () => {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="Enter address or click map below to position marker"
-              className="w-full mb-3 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-red-500"
+              className="w-full mb-3 bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded px-3 py-2 text-xs text-forest-950 dark:text-white placeholder-sage-500 focus:outline-none focus:border-forest-600"
             />
 
-            <EmergencyMap
-              center={[latitude, longitude]}
-              zoom={14}
-              selectableLocation={true}
-              selectedLocation={[latitude, longitude]}
-              onSelectLocation={handleMapPin}
-              height="240px"
-            />
-            <span className="text-[10px] text-slate-500 mt-1 block">
-              Tip: Click anywhere on the map to pin the exact emergency site.
+            <div className="rounded overflow-hidden border border-ivory-300 dark:border-forest-800">
+              <EmergencyMap
+                center={[latitude, longitude]}
+                zoom={14}
+                selectableLocation={true}
+                selectedLocation={[latitude, longitude]}
+                onSelectLocation={handleMapPin}
+                height="240px"
+              />
+            </div>
+            <span className="text-[10px] text-sage-600 dark:text-sage-500 mt-1 block">
+              Tip: Click anywhere on the map or type exact coordinates to position marker.
             </span>
           </div>
 
           {/* Impact Estimates & Casualties */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Estimated People Affected / Trapped
+              <label className="block text-xs font-semibold text-forest-900 dark:text-sage-300 mb-1">
+                {t('estimatedPeopleAffected', 'Estimated People Affected / Trapped')}
               </label>
               <input
                 type="number"
                 min="0"
                 value={peopleAffected}
                 onChange={(e) => setPeopleAffected(Number(e.target.value))}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded px-3 py-2 text-xs text-forest-950 dark:text-white focus:outline-none focus:border-forest-600"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Reported Casualties / Injuries
+              <label className="block text-xs font-semibold text-forest-900 dark:text-sage-300 mb-1">
+                {t('reportedInjuries', 'Reported Casualties / Injuries')}
               </label>
               <input
                 type="number"
                 min="0"
                 value={injuries}
                 onChange={(e) => setInjuries(Number(e.target.value))}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+                className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded px-3 py-2 text-xs text-forest-950 dark:text-white focus:outline-none focus:border-forest-600"
               />
             </div>
           </div>
@@ -433,7 +483,7 @@ export const ReportEmergencyPage: React.FC = () => {
           {/* Secondary Hazards & Damage */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-forest-900 dark:text-sage-300 mb-1">
                 Secondary Hazards (e.g. live wire, gas leak)
               </label>
               <input
@@ -441,11 +491,11 @@ export const ReportEmergencyPage: React.FC = () => {
                 value={hazards}
                 onChange={(e) => setHazards(e.target.value)}
                 placeholder="Downed live wires, rapid current..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-red-500"
+                className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded px-3 py-2 text-xs text-forest-950 dark:text-white placeholder-sage-500 focus:outline-none focus:border-forest-600"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-forest-900 dark:text-sage-300 mb-1">
                 Infrastructure Damage (e.g. road blocked)
               </label>
               <input
@@ -453,20 +503,30 @@ export const ReportEmergencyPage: React.FC = () => {
                 value={damage}
                 onChange={(e) => setDamage(e.target.value)}
                 placeholder="Bridge approach washed away..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-red-500"
+                className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded px-3 py-2 text-xs text-forest-950 dark:text-white placeholder-sage-500 focus:outline-none focus:border-forest-600"
               />
             </div>
           </div>
 
-          {/* Photo Upload */}
+          {/* Photo Upload & Live Camera WebRTC */}
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
-              Attach Photographic / Video Evidence
+            <label className="block text-xs font-bold text-forest-900 dark:text-sage-300 uppercase tracking-wider mb-2">
+              {t('attachMedia', 'Attach Photographic / Live Camera Evidence')}
             </label>
-            <div className="flex items-center gap-3">
-              <label className="cursor-pointer px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold border border-slate-700 flex items-center gap-2 transition-colors">
-                <Camera className="w-4 h-4 text-emerald-400" />
-                <span>Upload Media</span>
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Direct Live Camera Launch */}
+              <button
+                type="button"
+                onClick={() => setShowLiveCamera(true)}
+                className="px-4 py-2 bg-forest-800 hover:bg-forest-700 text-ivory-50 rounded text-xs font-medium flex items-center gap-2 transition-colors shadow-sm"
+              >
+                <Camera className="w-4 h-4 text-ivory-200" />
+                <span>{t('captureLivePhoto', 'Capture Live Photo (Camera App)')}</span>
+              </button>
+
+              <label className="cursor-pointer px-4 py-2 bg-ivory-200 dark:bg-forest-850 hover:bg-ivory-300 dark:hover:bg-forest-800 text-forest-900 dark:text-white rounded text-xs font-medium border border-ivory-300 dark:border-forest-700 flex items-center gap-2 transition-colors">
+                <Upload className="w-4 h-4 text-forest-700 dark:text-sage-300" />
+                <span>{t('uploadMediaFile', 'Upload File')}</span>
                 <input
                   type="file"
                   accept="image/*,video/*"
@@ -474,27 +534,28 @@ export const ReportEmergencyPage: React.FC = () => {
                   className="hidden"
                 />
               </label>
-              {uploadingMedia && <Loader2 className="w-4 h-4 animate-spin text-slate-400" />}
+
+              {uploadingMedia && <Loader2 className="w-4 h-4 animate-spin text-sage-500" />}
               {mediaUrls.length > 0 && (
-                <span className="text-xs text-emerald-400 font-mono">
-                  {mediaUrls.length} file attached
+                <span className="text-xs text-forest-700 dark:text-sage-300 font-mono font-semibold">
+                  ✓ {mediaUrls.length} file(s) attached
                 </span>
               )}
             </div>
           </div>
 
           {/* Submitter Info & Anonymous Option */}
-          <div className="pt-4 border-t border-slate-800">
+          <div className="pt-4 border-t border-ivory-300 dark:border-forest-800">
             <div className="flex items-center gap-2 mb-3">
               <input
                 type="checkbox"
                 id="anon"
                 checked={isAnonymous}
                 onChange={(e) => setIsAnonymous(e.target.checked)}
-                className="rounded bg-slate-950 border-slate-800 text-red-600 focus:ring-0"
+                className="rounded bg-ivory-50 dark:bg-forest-950 border-ivory-300 dark:border-forest-800 text-forest-700 focus:ring-0"
               />
-              <label htmlFor="anon" className="text-xs text-slate-300">
-                Submit this emergency report anonymously
+              <label htmlFor="anon" className="text-xs text-forest-900 dark:text-sage-300">
+                {t('submitAnonymously', 'Submit this emergency report anonymously')}
               </label>
             </div>
 
@@ -505,14 +566,14 @@ export const ReportEmergencyPage: React.FC = () => {
                   placeholder="Your Name (Optional)"
                   value={submitterName}
                   onChange={(e) => setSubmitterName(e.target.value)}
-                  className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-red-500"
+                  className="bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded px-3 py-2 text-xs text-forest-950 dark:text-white placeholder-sage-500 focus:outline-none focus:border-forest-600"
                 />
                 <input
                   type="tel"
                   placeholder="Callback Phone Number"
                   value={submitterPhone}
                   onChange={(e) => setSubmitterPhone(e.target.value)}
-                  className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-red-500"
+                  className="bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded px-3 py-2 text-xs text-forest-950 dark:text-white placeholder-sage-500 focus:outline-none focus:border-forest-600"
                 />
               </div>
             )}
@@ -522,21 +583,32 @@ export const ReportEmergencyPage: React.FC = () => {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3.5 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(239,68,68,0.4)] flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
+            className="w-full py-3 bg-forest-800 hover:bg-forest-700 text-ivory-50 rounded font-medium text-sm shadow flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
           >
             {submitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Running Multi-Agent AI Analysis Pipeline...</span>
+                <span>{t('runningAIPipeline', 'Running Multi-Agent AI Analysis Pipeline...')}</span>
               </>
             ) : (
               <>
-                <ShieldAlert className="w-5 h-5" />
-                <span>Submit Emergency Distress Report</span>
+                <ShieldAlert className="w-5 h-5 text-ivory-200" />
+                <span>{t('submitReportButton', 'Submit Emergency Distress Report')}</span>
               </>
             )}
           </button>
         </form>
+      )}
+
+      {/* Direct Live WebRTC Camera Modal */}
+      {showLiveCamera && (
+        <LiveCameraCaptureModal
+          isOpen={showLiveCamera}
+          onClose={() => setShowLiveCamera(false)}
+          onCapture={(fileUrl) => {
+            setMediaUrls((prev) => [...prev, fileUrl]);
+          }}
+        />
       )}
 
     </div>

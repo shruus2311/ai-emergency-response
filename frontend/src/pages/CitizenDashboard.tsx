@@ -5,12 +5,14 @@ import {
   Clock, CheckCircle, AlertTriangle, ArrowRight, PhoneCall 
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { api } from '../services/api';
 import { SeverityBadge } from '../components/common/SeverityBadge';
 import { StatusBadge } from '../components/common/StatusBadge';
 
 export const CitizenDashboard: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [myReports, setMyReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,109 +32,133 @@ export const CitizenDashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8 font-sans">
+    <div className="max-w-4xl mx-auto px-4 py-6 space-y-6 font-sans">
       
       {/* Citizen Welcome Banner */}
-      <div className="bg-gradient-to-r from-red-950/60 to-slate-900 border border-red-900/60 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+      <div className="bg-ivory-100/90 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
         <div>
-          <span className="text-xs font-mono font-bold text-red-400 uppercase tracking-widest">
-            Civilian Emergency Portal
+          <span className="text-xs font-mono font-bold text-forest-700 dark:text-sage-400 uppercase tracking-widest">
+            {t('navCitizenPortal', 'Civilian Emergency Portal')}
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
-            Emergency Response & Safety
+          <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white font-serif mt-1">
+            {t('appTitle', 'ResQIntel')} — {t('appTagline', 'Emergency Response Intelligence')}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-xl">
-            Welcome, {user?.full_name || 'Citizen'}. If you are in immediate life-threatening danger, trigger the SOS button below to transmit your coordinates instantly.
+          <p className="text-xs sm:text-sm text-sage-800 dark:text-sage-400 mt-2 max-w-xl font-sans">
+            {t('appMission', 'From scattered emergency signals to coordinated action.')}
           </p>
         </div>
 
         {/* SOS Button */}
-        <Link
-          to="/sos"
-          className="w-full sm:w-auto px-8 py-5 bg-red-600 hover:bg-red-500 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-[0_0_30px_rgba(239,68,68,0.5)] flex items-center justify-center gap-3 transition-all animate-pulse"
-        >
-          <AlertOctagon className="w-7 h-7" />
-          <span>TRIGGER SOS</span>
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <Link
+            to="/emergency"
+            className="px-5 py-3 bg-amber-700 hover:bg-amber-600 active:scale-95 text-white font-bold text-sm rounded shadow-sm flex items-center justify-center gap-2 transition-all"
+          >
+            <AlertOctagon className="w-5 h-5" />
+            <span>{t('navDisasterMode', 'DISASTER / FLOOD MODE')}</span>
+          </Link>
+          <Link
+            to="/sos"
+            className="px-5 py-3 bg-forest-800 hover:bg-forest-700 active:scale-95 text-ivory-50 font-bold text-sm rounded shadow-sm flex items-center justify-center gap-2 transition-all"
+          >
+            <PhoneCall className="w-5 h-5 text-ivory-200" />
+            <span>{t('actionQuickSOS', 'QUICK SOS')}</span>
+          </Link>
+        </div>
       </div>
 
       {/* Action Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           to="/report"
-          className="bg-slate-900 border border-slate-800 hover:border-slate-700 p-6 rounded-xl shadow-lg transition-all group flex flex-col justify-between"
+          className="bg-ivory-100/80 dark:bg-forest-900/80 border border-ivory-300 dark:border-forest-800 hover:border-forest-400 dark:hover:border-forest-700 p-6 rounded shadow-sm transition-all group flex flex-col justify-between"
         >
           <div>
-            <div className="w-10 h-10 rounded-lg bg-red-950/80 border border-red-700 text-red-400 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded bg-ivory-200 dark:bg-forest-850 border border-ivory-300 dark:border-forest-700 text-forest-800 dark:text-sage-300 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
               <ShieldAlert className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-base text-white">File Multimodal Report</h3>
-            <p className="text-xs text-slate-400 mt-1">
-              Submit description, GPS location, voice audio recording, and photographic evidence for AI verification.
+            <h3 className="font-bold text-base text-forest-950 dark:text-white font-serif">{t('fileReportTitle', 'File Multimodal Report')}</h3>
+            <p className="text-xs text-sage-800 dark:text-sage-400 mt-1 font-sans">
+              {t('fileReportDesc', 'Submit description, live GPS location, voice audio recording, and photographic evidence for multi-agent AI verification.')}
             </p>
           </div>
-          <div className="mt-4 flex items-center gap-2 text-xs font-bold text-red-400 group-hover:translate-x-1 transition-transform">
-            <span>Open Report Form</span>
-            <ArrowRight className="w-4 h-4" />
+          <div className="mt-4 flex items-center gap-1 text-xs font-bold text-forest-800 dark:text-sage-300 group-hover:translate-x-1 transition-transform">
+            <span>{t('openReportForm', 'Open Reporting Form')}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </div>
         </Link>
 
         <Link
-          to="/map"
-          className="bg-slate-900 border border-slate-800 hover:border-slate-700 p-6 rounded-xl shadow-lg transition-all group flex flex-col justify-between"
+          to="/emergency"
+          className="bg-ivory-100/80 dark:bg-forest-900/80 border border-ivory-300 dark:border-forest-800 hover:border-forest-400 dark:hover:border-forest-700 p-6 rounded shadow-sm transition-all group flex flex-col justify-between"
         >
           <div>
-            <div className="w-10 h-10 rounded-lg bg-blue-950/80 border border-blue-700 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-              <MapPin className="w-5 h-5" />
+            <div className="w-10 h-10 rounded bg-amber-100 dark:bg-forest-850 border border-amber-300 dark:border-amber-700/60 text-amber-800 dark:text-amber-400 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+              <AlertOctagon className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-base text-white">Live Hazard Map</h3>
-            <p className="text-xs text-slate-400 mt-1">
-              View verified disaster perimeters, shelters, hospital bed capacities, and flood/fire risk zones nearby.
+            <h3 className="font-bold text-base text-forest-950 dark:text-white font-serif">{t('offlineDisasterTitle', 'Offline Flood & Disaster Mode')}</h3>
+            <p className="text-xs text-sage-800 dark:text-sage-400 mt-1 font-sans">
+              {t('offlineDisasterDesc', 'Designed for low battery, zero connectivity, and wet screen distress situations with tap-based panic reporting.')}
             </p>
           </div>
-          <div className="mt-4 flex items-center gap-2 text-xs font-bold text-blue-400 group-hover:translate-x-1 transition-transform">
-            <span>Explore Map</span>
-            <ArrowRight className="w-4 h-4" />
+          <div className="mt-4 flex items-center gap-1 text-xs font-bold text-amber-800 dark:text-amber-400 group-hover:translate-x-1 transition-transform">
+            <span>{t('launchDisasterMode', 'Launch Disaster Safety Mode')}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </div>
         </Link>
       </div>
 
-      {/* My Submitted Reports */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-        <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2 mb-4">
-          <FileText className="w-4 h-4 text-red-400" />
-          My Distress Reports ({myReports.length})
-        </h2>
+      {/* Citizen's Past Submitted Reports */}
+      <div className="bg-ivory-100/80 dark:bg-forest-900/80 border border-ivory-300 dark:border-forest-800 rounded p-6 shadow-sm space-y-4">
+        <div className="flex items-center justify-between border-b border-ivory-300 dark:border-forest-800 pb-3">
+          <h2 className="text-xs font-bold text-forest-950 dark:text-white uppercase tracking-wider font-mono flex items-center gap-2">
+            <FileText className="w-4 h-4 text-forest-700 dark:text-sage-400" />
+            {t('mySubmittedReports', 'My Submitted Emergency Reports')}
+          </h2>
+          <span className="text-xs font-mono text-sage-700 dark:text-sage-400">{myReports.length} {t('recordsCited', 'Record(s)')}</span>
+        </div>
 
         {loading ? (
-          <div className="py-6 text-center text-xs text-slate-500">Loading submitted reports...</div>
+          <div className="text-center py-8 text-xs text-sage-600 dark:text-sage-400">{t('queryingReports', 'Querying report status...')}</div>
         ) : myReports.length === 0 ? (
-          <div className="py-8 text-center text-xs text-slate-500">
-            No distress reports filed yet from this account.
+          <div className="text-center py-8 text-xs text-sage-600 dark:text-sage-400">
+            {t('noReportsYet', 'You have not submitted any emergency distress reports yet.')}
           </div>
         ) : (
-          <div className="divide-y divide-slate-800">
-            {myReports.map((rpt) => (
-              <div key={rpt.id} className="py-3 flex items-start justify-between gap-4">
+          <div className="space-y-3">
+            {myReports.map((rpt: any) => (
+              <div
+                key={rpt.id}
+                className="p-4 bg-ivory-50 dark:bg-forest-950 rounded border border-ivory-300 dark:border-forest-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+              >
                 <div>
-                  <div className="text-xs font-bold text-slate-200">{rpt.raw_text}</div>
-                  <div className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
-                    <MapPin className="w-3 h-3 text-slate-500" />
-                    <span>{rpt.address || 'Sector Coordinates'}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-forest-800 dark:text-sage-300 text-xs">
+                      #{rpt.id.substring(0, 8)}
+                    </span>
+                    <span className="font-semibold text-forest-950 dark:text-white text-xs">{rpt.incident_type}</span>
+                    <span className="text-[10px] text-sage-600 dark:text-sage-400 font-mono">
+                      {new Date(rpt.created_at).toLocaleString()}
+                    </span>
                   </div>
-                  <div className="text-[10px] text-slate-500 mt-1 flex items-center gap-1 font-mono">
-                    <Clock className="w-3 h-3" />
-                    <span>{new Date(rpt.created_at).toLocaleString()}</span>
-                  </div>
+                  <p className="text-xs text-sage-800 dark:text-sage-400 mt-1 max-w-xl truncate font-sans">
+                    {rpt.raw_text}
+                  </p>
                 </div>
-                {rpt.incident_id && (
-                  <Link
-                    to={`/incidents/${rpt.incident_id}`}
-                    className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 rounded border border-slate-700 transition-colors whitespace-nowrap"
-                  >
-                    View Status
-                  </Link>
-                )}
+
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-ivory-200 dark:bg-forest-850 text-forest-900 dark:text-sage-300 border border-ivory-300 dark:border-forest-700">
+                    {rpt.report_type}
+                  </span>
+                  {rpt.incident_id && (
+                    <button
+                      onClick={() => navigate(`/incidents/${rpt.incident_id}`)}
+                      className="px-2.5 py-1 bg-ivory-200 dark:bg-forest-850 hover:bg-forest-800 hover:text-ivory-50 dark:hover:bg-forest-800 text-forest-900 dark:text-white rounded text-xs font-semibold"
+                    >
+                      {t('actionTrackStatus', 'Track Status')}
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>

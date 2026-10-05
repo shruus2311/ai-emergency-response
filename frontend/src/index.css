@@ -3,17 +3,84 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-slate-950 text-slate-100;
+  :root,
+  [data-theme="light"] {
+    --color-bg: #F3F0E6;
+    --color-surface: #FAF8F1;
+    --color-card: #FBFAF5;
+    --color-elevated: #FFFFFF;
+    --color-border: #D8D8C9;
+    --color-border-subtle: #E8E4D5;
+    --color-text-main: #17231C;
+    --color-text-muted: #667269;
+    --color-primary: #173C2C;
+    --color-primary-hover: #0F2A20;
+    --color-primary-light: #DDE6D8;
+    --color-pill: #173C2C;
+    --color-sidebar: #0F2A20;
+    color-scheme: light;
   }
+
+  .dark,
+  [data-theme="dark"] {
+    --color-bg: #0E2119;
+    --color-surface: #142C22;
+    --color-card: #142C22;
+    --color-elevated: #1B382B;
+    --color-border: #31503F;
+    --color-border-subtle: #223E30;
+    --color-text-main: #F3F0E6;
+    --color-text-muted: #A8B5AC;
+    --color-primary: #6F927C;
+    --color-primary-hover: #829681;
+    --color-primary-light: #1B382B;
+    --color-pill: #6F927C;
+    --color-sidebar: #0B1E17;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text-main);
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(95, 141, 78, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(95, 141, 78, 0.45);
 }
 
 /* Leaflet Container Styling */
 .leaflet-container {
   font-family: inherit;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  z-index: 1;
+  background: #161E18 !important;
+}
+
+[data-theme="light"] .leaflet-container {
+  background: #E5E7EB !important;
+}
+
+.leaflet-tile-container img {
+  max-width: none !important;
 }
 
 .custom-map-marker {

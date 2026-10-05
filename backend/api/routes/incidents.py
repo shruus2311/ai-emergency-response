@@ -9,7 +9,7 @@ import uuid
 from backend.core.database import get_db
 from backend.models.all_models import (
     Incident, IncidentReport, IncidentMedia, IncidentTimeline, 
-    AIAnalysis, AIRecommendation, ResourceAssignment, User, Resource
+    AIAnalysis, AIRecommendation, ResourceAssignment, User, Resource, Responder, Notification
 )
 from backend.schemas.all_schemas import (
     IncidentStatusUpdate, IncidentVerificationRequest, IncidentUpdate
@@ -19,6 +19,20 @@ from backend.core.websocket_manager import ws_manager
 
 router = APIRouter(prefix="/incidents", tags=["Incidents & Operational Lifecycle"])
 
+# Valid state machine transitions
+VALID_LIFECYCLE_TRANSITIONS = {
+    "REPORTED": ["AI_ANALYZING", "PENDING_VERIFICATION", "VERIFIED", "CLOSED"],
+    "AI_ANALYZING": ["PENDING_VERIFICATION", "VERIFIED", "CLOSED"],
+    "PENDING_VERIFICATION": ["VERIFIED", "CLOSED", "REJECTED"],
+    "VERIFIED": ["PRIORITIZED", "DISPATCHED", "RESPONDER_EN_ROUTE", "RESOLVED", "CLOSED"],
+    "PRIORITIZED": ["DISPATCHED", "RESPONDER_EN_ROUTE", "RESOLVED", "CLOSED"],
+    "DISPATCHED": ["RESPONDER_EN_ROUTE", "ON_SCENE", "RESOLVED", "CLOSED"],
+    "RESPONDER_EN_ROUTE": ["ON_SCENE", "RESOLVED", "CLOSED"],
+    "ON_SCENE": ["RESOLVED", "CLOSED"],
+    "RESOLVED": ["CLOSED", "VERIFIED"],
+    "CLOSED": ["VERIFIED"],
+}
+
 @router.get("/")
 async def list_incidents(
     status: Optional[str] = None,
@@ -26,7 +40,7 @@ async def list_incidents(
     incident_type: Optional[str] = None,
     verification: Optional[str] = None,
     search: Optional[str] = None,
-    limit: int = 50,
+    limit: int = 100,
     offset: int = 0,
     db: AsyncSession = Depends(get_db)
 ):
@@ -45,7 +59,6 @@ async def list_incidents(
     result = await db.execute(query)
     incidents = result.scalars().all()
     
-    # Format list
     output = []
     for inc in incidents:
         output.append({
@@ -67,6 +80,7 @@ async def list_incidents(
             "injuries_count": inc.injuries_count,
             "fatalities_count": inc.fatalities_count,
             "verification_status": inc.verification_status,
+            "assigned_responder_id": inc.assigned_responder_id,
             "is_demo": inc.is_demo,
             "created_at": inc.created_at.isoformat() if inc.created_at else None,
             "updated_at": inc.updated_at.isoformat() if inc.updated_at else None
@@ -91,10 +105,25 @@ async def get_incident_detail(
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found")
         
-    # Get latest AI analysis
     latest_analysis = incident.analyses[-1] if incident.analyses else None
     
-    # Format response
+    # Load assigned responder details if any
+    assigned_responder = None
+    if incident.assigned_responder_id:
+        resp_res = await db.execute(select(Responder).where(Responder.id == incident.assigned_responder_id))
+        r_obj = resp_res.scalars().first()
+        if r_obj:
+            assigned_responder = {
+                "id": r_obj.id,
+                "name": r_obj.responder_name,
+                "badge": r_obj.badge_number,
+                "specialization": r_obj.specialization,
+                "status": r_obj.status,
+                "latitude": r_obj.latitude,
+                "longitude": r_obj.longitude,
+                "phone": r_obj.phone
+            }
+
     return {
         "id": incident.id,
         "incident_number": incident.incident_number,
@@ -120,6 +149,8 @@ async def get_incident_detail(
         "verified_at": incident.verified_at.isoformat() if incident.verified_at else None,
         "verification_notes": incident.verification_notes,
         "cluster_id": incident.cluster_id,
+        "assigned_responder_id": incident.assigned_responder_id,
+        "assigned_responder": assigned_responder,
         "is_demo": incident.is_demo,
         "created_at": incident.created_at.isoformat() if incident.created_at else None,
         "reports": [
@@ -133,6 +164,8 @@ async def get_incident_detail(
                 "address": r.address,
                 "injuries_reported": r.injuries_reported,
                 "people_affected": r.people_affected,
+                "hazards": r.hazards,
+                "damage": r.damage,
                 "submitter_name": r.submitter_name if not r.is_anonymous else "Anonymous Citizen",
                 "submitter_phone": r.submitter_phone if not r.is_anonymous else None,
                 "is_offline_synced": r.is_offline_synced,
@@ -231,12 +264,12 @@ async def verify_incident(
     elif verif.verification_status.upper() == "REJECTED":
         incident.status = "CLOSED"
 
-    # Add to timeline
+    # Add timeline event
     timeline_event = IncidentTimeline(
         incident_id=incident.id,
         event_type="HUMAN_VERIFICATION",
-        title=f"Incident {verif.verification_status.upper()} by Human Operator",
-        description=f"Operator {user.full_name} ({user.role}) recorded verification. Notes: {verif.verification_notes or 'Standard protocol confirmation.'}",
+        title=f"Incident {verif.verification_status.upper()} by Operator",
+        description=f"Operator {user.full_name} ({user.role}) recorded verification: {verif.verification_notes or 'Standard human operator confirmation'}",
         previous_status=prev_status,
         new_status=incident.status,
         actor_id=user.id,
@@ -244,6 +277,17 @@ async def verify_incident(
         actor_role=user.role
     )
     db.add(timeline_event)
+
+    # Create notification
+    notif = Notification(
+        title=f"Incident {incident.incident_number} {incident.verification_status}",
+        message=f"{user.full_name} set verification status to {incident.verification_status}.",
+        notification_type="STATUS_UPDATE",
+        severity="URGENT" if incident.verification_status == "VERIFIED" else "INFO",
+        incident_id=incident.id,
+        target_role="ALL"
+    )
+    db.add(notif)
     await db.commit()
 
     # Log audit event
@@ -257,9 +301,12 @@ async def verify_incident(
     await ws_manager.broadcast({
         "event": "INCIDENT_VERIFIED",
         "incident_id": incident.id,
+        "incident_number": incident.incident_number,
         "verification_status": incident.verification_status,
+        "previous_status": prev_status,
         "new_status": incident.status,
-        "verified_by": user.full_name
+        "verified_by": user.full_name,
+        "timestamp": datetime.now(timezone.utc).isoformat()
     })
 
     return {
@@ -277,27 +324,74 @@ async def update_incident_status(
     user: User = Depends(require_roles(["ADMIN", "DISPATCHER", "RESPONDER"])),
     db: AsyncSession = Depends(get_db)
 ):
-    """Lifecycle transition: REPORTED -> AI_ANALYZING -> PENDING_VERIFICATION -> VERIFIED -> PRIORITIZED -> DISPATCHED -> RESPONDER_EN_ROUTE -> ON_SCENE -> RESOLVED -> CLOSED"""
+    """Enforces strict lifecycle state machine transitions with real database updates and resource cascades"""
     result = await db.execute(select(Incident).where(Incident.id == incident_id))
     incident = result.scalars().first()
     if not incident:
         raise HTTPException(status_code=404, detail="Incident not found")
 
     prev_status = incident.status
-    incident.status = status_in.status.upper()
+    new_st = status_in.status.upper()
+
+    # Check state machine transition validity (allow idempotent transition or valid progression)
+    allowed = VALID_LIFECYCLE_TRANSITIONS.get(prev_status, [])
+    if new_st != prev_status and new_st not in allowed and user.role != "ADMIN":
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid lifecycle transition from {prev_status} to {new_st}. Allowed: {allowed}"
+        )
+
+    incident.status = new_st
+
+    # Cascade resource releases on RESOLVED or CLOSED
+    if new_st in ["RESOLVED", "CLOSED"]:
+        # Release assigned resources
+        r_assignments_res = await db.execute(select(ResourceAssignment).where(ResourceAssignment.incident_id == incident.id))
+        assignments = r_assignments_res.scalars().all()
+        for assign in assignments:
+            if assign.status != "RELEASED":
+                assign.status = "RELEASED"
+                assign.completion_time = datetime.now(timezone.utc)
+            if assign.resource_id:
+                res_obj = (await db.execute(select(Resource).where(Resource.id == assign.resource_id))).scalars().first()
+                if res_obj:
+                    res_obj.status = "AVAILABLE"
+                    res_obj.current_incident_id = None
+            if assign.responder_id:
+                resp_obj = (await db.execute(select(Responder).where(Responder.id == assign.responder_id))).scalars().first()
+                if resp_obj:
+                    resp_obj.status = "ON_DUTY"
+                    resp_obj.current_incident_id = None
+
+        if incident.assigned_responder_id:
+            resp_obj = (await db.execute(select(Responder).where(Responder.id == incident.assigned_responder_id))).scalars().first()
+            if resp_obj:
+                resp_obj.status = "ON_DUTY"
+                resp_obj.current_incident_id = None
 
     timeline_event = IncidentTimeline(
         incident_id=incident.id,
         event_type="STATUS_CHANGE",
-        title=f"Status changed to {incident.status}",
-        description=status_in.notes or f"Operational status advanced by {user.full_name}.",
+        title=f"Incident Status: {new_st}",
+        description=status_in.notes or f"Operational status advanced to {new_st} by {user.full_name} ({user.role}).",
         previous_status=prev_status,
-        new_status=incident.status,
+        new_status=new_st,
         actor_id=user.id,
         actor_name=user.full_name,
         actor_role=user.role
     )
     db.add(timeline_event)
+
+    # Notification for relevant users
+    notif = Notification(
+        title=f"Incident {incident.incident_number} -> {new_st}",
+        message=status_in.notes or f"Status updated to {new_st} by {user.full_name}.",
+        notification_type="STATUS_UPDATE",
+        severity="INFO" if new_st in ["RESOLVED", "CLOSED"] else "URGENT",
+        incident_id=incident.id,
+        target_role="ALL"
+    )
+    db.add(notif)
     await db.commit()
 
     await log_audit_event(
@@ -306,13 +400,20 @@ async def update_incident_status(
         request=request
     )
 
-    # Broadcast real-time update
+    # Broadcast real-time update to all dashboards
     await ws_manager.broadcast({
         "event": "INCIDENT_STATUS_UPDATED",
         "incident_id": incident.id,
+        "incident_number": incident.incident_number,
         "previous_status": prev_status,
         "new_status": incident.status,
-        "updated_by": user.full_name
+        "updated_by": user.full_name,
+        "timestamp": datetime.now(timezone.utc).isoformat()
     })
 
-    return {"status": "SUCCESS", "incident_id": incident.id, "current_status": incident.status}
+    return {
+        "status": "SUCCESS",
+        "incident_id": incident.id,
+        "previous_status": prev_status,
+        "current_status": incident.status
+    }

@@ -9,13 +9,14 @@ from backend.core.database import get_db
 from backend.models.all_models import (
     Incident, IncidentReport, IncidentMedia, IncidentTimeline,
     AIAnalysis, AIEvidence, AIRecommendation, Resource, ResourceAssignment,
-    SituationReport, IncidentCluster, User
+    SituationReport, IncidentCluster, ExternalSignal, User
 )
-from backend.schemas.all_schemas import CopilotQueryRequest, SitrepGenerateRequest
+from backend.schemas.all_schemas import CopilotQueryRequest, SitrepGenerateRequest, SituationIntelligenceQuery
 from backend.api.deps import get_required_user, get_current_user, require_roles, log_audit_event
 from backend.agents.orchestrator import AgentOrchestrator
 from backend.agents.copilot_agent import CopilotAgent
 from backend.agents.sitrep_agent import SitrepAgent
+from backend.agents.situation_intelligence_agent import SituationIntelligenceAgent
 from backend.core.websocket_manager import ws_manager
 
 router = APIRouter(prefix="/ai", tags=["AI Intelligence, Copilot & SITREP"])
@@ -280,3 +281,144 @@ async def list_incident_clusters(
     q = select(IncidentCluster).order_by(desc(IncidentCluster.created_at))
     res = await db.execute(q)
     return res.scalars().all()
+
+@router.get("/situation-intelligence")
+async def get_situation_intelligence(
+    latitude: float = 18.5204,
+    longitude: float = 73.8567,
+    radius_km: float = 50.0,
+    db: AsyncSession = Depends(get_db)
+):
+    """Section 20: Fuses direct emergency signals with real external disaster feeds (USGS, GDACS, Weather, News)"""
+    inc_query = await db.execute(select(Incident).where(Incident.is_active == True))
+    all_incidents = [
+        {"id": inc.id, "title": inc.title, "incident_type": inc.incident_type, "latitude": inc.latitude, "longitude": inc.longitude}
+        for inc in inc_query.scalars().all()
+    ]
+
+    analysis = await SituationIntelligenceAgent.analyze_area_situation(
+        latitude=latitude,
+        longitude=longitude,
+        radius_km=radius_km,
+        active_incidents=all_incidents
+    )
+
+    # Persist live external signals into DB for historical evidence traceability
+    for sig in analysis.get("signals", []):
+        existing_sig = await db.execute(select(ExternalSignal).where(ExternalSignal.title == sig.get("title")))
+        if not existing_sig.scalars().first():
+            ext_rec = ExternalSignal(
+                source=sig.get("source", "External Feed"),
+                source_type=sig.get("source_type", "WEATHER"),
+                title=sig.get("title", ""),
+                description=sig.get("description", ""),
+                event_type=sig.get("event_type", "Emergency Alert"),
+                latitude=sig.get("latitude"),
+                longitude=sig.get("longitude"),
+                radius_km=sig.get("radius_km", 10.0),
+                severity=sig.get("severity", "MEDIUM"),
+                reference_url=sig.get("reference_url"),
+                confidence=sig.get("confidence", 0.85),
+                source_reliability=sig.get("source_reliability", "OFFICIAL"),
+                processing_status="PROCESSED",
+                raw_reference_json=sig.get("raw_reference")
+            )
+            db.add(ext_rec)
+    await db.commit()
+
+    return analysis
+
+@router.get("/external-signals")
+async def list_external_signals(
+    limit: int = 50,
+    db: AsyncSession = Depends(get_db)
+):
+    """Section 19: Lists ground-truth external disaster signals from USGS, GDACS, Open-Meteo, and RSS"""
+    q = select(ExternalSignal).order_by(desc(ExternalSignal.created_at)).limit(limit)
+    res = await db.execute(q)
+    return res.scalars().all()
+
+@router.post("/proactive-detect")
+async def trigger_proactive_detection(
+    latitude: float = 18.5204,
+    longitude: float = 73.8567,
+    request: Request = None,
+    user: User = Depends(require_roles(["ADMIN", "DISPATCHER"])),
+    db: AsyncSession = Depends(get_db)
+):
+    """Section 21: Proactive Incident Detection - Spawns potential incidents from high-severity fused signals"""
+    inc_query = await db.execute(select(Incident).where(Incident.is_active == True))
+    all_incidents = [
+        {"id": inc.id, "title": inc.title, "incident_type": inc.incident_type, "latitude": inc.latitude, "longitude": inc.longitude}
+        for inc in inc_query.scalars().all()
+    ]
+
+    analysis = await SituationIntelligenceAgent.analyze_area_situation(
+        latitude=latitude,
+        longitude=longitude,
+        radius_km=40.0,
+        active_incidents=all_incidents
+    )
+
+    created_potentials = []
+    for pot in analysis.get("potential_incidents", []):
+        inc_count_res = await db.execute(select(Incident))
+        inc_count = len(inc_count_res.scalars().all()) + 1
+        inc_num = f"POT-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{inc_count:04d}"
+
+        new_incident = Incident(
+            incident_number=inc_num,
+            title=pot.get("title"),
+            description=pot.get("description"),
+            incident_type=pot.get("potential_type", "Flood"),
+            status="EXTERNAL_SIGNAL_DETECTED",
+            severity_score=pot.get("severity_score", 7.0),
+            severity_class=pot.get("severity_class", "HIGH"),
+            priority_score=pot.get("severity_score", 7.0) * 10,
+            latitude=pot.get("latitude", latitude),
+            longitude=pot.get("longitude", longitude),
+            address=f"Sector Proactive Sensor Grid [{latitude:.4f}, {longitude:.4f}]",
+            verification_status="UNVERIFIED",
+            created_by_id=user.id
+        )
+        db.add(new_incident)
+        await db.flush()
+
+        # Timeline log
+        t_event = IncidentTimeline(
+            incident_id=new_incident.id,
+            event_type="PROACTIVE_AI_DETECTION",
+            title="Proactive Emergency Signal Detected",
+            description=f"Multi-Agent intelligence fused external feeds: {', '.join(pot.get('evidence_sources', []))}. Requires human dispatcher verification.",
+            previous_status=None,
+            new_status="EXTERNAL_SIGNAL_DETECTED",
+            actor_name="Situation Intelligence Agent",
+            actor_role="AGENT"
+        )
+        db.add(t_event)
+        created_potentials.append(new_incident)
+
+        # Broadcast event
+        await ws_manager.broadcast({
+            "event": "PROACTIVE_INCIDENT_DETECTED",
+            "incident_id": new_incident.id,
+            "incident_number": new_incident.incident_number,
+            "title": new_incident.title,
+            "incident_type": new_incident.incident_type,
+            "status": new_incident.status,
+            "severity_class": new_incident.severity_class,
+            "latitude": new_incident.latitude,
+            "longitude": new_incident.longitude,
+            "evidence_sources": pot.get("evidence_sources", []),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        })
+
+    await db.commit()
+
+    return {
+        "status": "SUCCESS",
+        "created_potential_incidents": len(created_potentials),
+        "threat_level": analysis.get("threat_level"),
+        "analysis": analysis
+    }
+

@@ -80,11 +80,12 @@ class DuplicateClusterAgent:
                 }
 
         # Decision thresholds
-        if highest_composite >= 0.72:
+        dist = breakdown.get("distance_km", 999.0)
+        if highest_composite >= 0.75 and dist <= 1.5:
             decision = "SAME_INCIDENT"
-            rationale = f"High multimodal correlation ({highest_composite:.2f}) with incident '{breakdown.get('matched_title')}'. Proximity {breakdown.get('distance_km')}km with matching semantic disaster signatures."
+            rationale = f"High multimodal correlation ({highest_composite:.2f}) with incident '{breakdown.get('matched_title')}'. Proximity {dist}km with matching semantic disaster signatures."
             is_cluster = True
-        elif highest_composite >= 0.42:
+        elif highest_composite >= 0.50 and dist <= 5.0:
             decision = "RELATED_INCIDENT"
             rationale = f"Moderate correlation ({highest_composite:.2f}) with nearby event '{breakdown.get('matched_title')}'. May constitute an escalating broader emergency cluster."
             is_cluster = True
@@ -96,7 +97,7 @@ class DuplicateClusterAgent:
         return {
             "decision": decision,
             "similarity_score": round(highest_composite, 2),
-            "matched_incident_id": best_match if (decision != "SEPARATE_INCIDENT") else None,
+            "matched_incident_id": best_match if (decision == "SAME_INCIDENT") else None,
             "cluster_candidate": is_cluster,
             "metrics": breakdown,
             "rationale": rationale,

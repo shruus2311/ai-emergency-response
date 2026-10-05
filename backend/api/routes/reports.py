@@ -5,6 +5,7 @@ from typing import List, Optional
 import os
 import shutil
 import uuid
+import base64
 from datetime import datetime, timezone
 
 from backend.core.database import get_db
@@ -13,7 +14,7 @@ from backend.models.all_models import (
     Incident, IncidentReport, IncidentMedia, IncidentTimeline, 
     AIAnalysis, AIEvidence, AIRecommendation, Resource, User, Notification
 )
-from backend.schemas.all_schemas import IncidentReportCreate, SOSRequest
+from backend.schemas.all_schemas import IncidentReportCreate, SOSRequest, EmergencyPacketCreate
 from backend.api.deps import get_current_user, log_audit_event
 from backend.agents.orchestrator import AgentOrchestrator
 from backend.services.providers.speech_provider import SpeechProvider
@@ -59,8 +60,8 @@ async def submit_emergency_report(
     target_incident = None
     is_new_incident = True
 
-    # If duplicate or strongly related to active incident, correlate
-    if clustering_decision in ["SAME_INCIDENT", "RELATED_INCIDENT"] and matched_inc_id:
+    # If duplicate of active incident, correlate
+    if clustering_decision == "SAME_INCIDENT" and matched_inc_id:
         target_res = await db.execute(select(Incident).where(Incident.id == matched_inc_id))
         target_incident = target_res.scalars().first()
         if target_incident:
@@ -84,10 +85,10 @@ async def submit_emergency_report(
             latitude=report_in.latitude,
             longitude=report_in.longitude,
             address=report_in.address or orchestration_res.get("geoint", {}).get("location_details", {}).get("address"),
-            affected_people_estimate=report_in.people_affected or orchestration_res.get("entities", {}).get("people_affected", 0),
-            injuries_count=report_in.injuries_reported or orchestration_res.get("entities", {}).get("injuries", 0),
-            hazards_description=report_in.hazards or ", ".join(orchestration_res.get("entities", {}).get("hazards", [])),
-            infrastructure_damage=report_in.damage or ", ".join(orchestration_res.get("entities", {}).get("infrastructure_damage", [])),
+            affected_people_estimate=report_in.people_affected or report_in.affected_people or orchestration_res.get("entities", {}).get("people_affected", 0),
+            injuries_count=report_in.injuries_reported or report_in.injuries or orchestration_res.get("entities", {}).get("injuries", 0),
+            hazards_description=(", ".join(report_in.hazards) if isinstance(report_in.hazards, list) else report_in.hazards) or ", ".join(orchestration_res.get("entities", {}).get("hazards", [])),
+            infrastructure_damage=(", ".join(report_in.damage) if isinstance(report_in.damage, list) else (report_in.infrastructure_damage or report_in.damage)) or ", ".join(orchestration_res.get("entities", {}).get("infrastructure_damage", [])),
             verification_status="UNVERIFIED",
             created_by_id=user.id if user else None
         )
@@ -133,12 +134,12 @@ async def submit_emergency_report(
         latitude=report_in.latitude,
         longitude=report_in.longitude,
         address=report_in.address,
-        injuries_reported=report_in.injuries_reported,
-        people_affected=report_in.people_affected,
-        hazards=report_in.hazards,
-        damage=report_in.damage,
+        injuries_reported=report_in.injuries_reported or report_in.injuries or 0,
+        people_affected=report_in.people_affected or report_in.affected_people or 0,
+        hazards=(", ".join(report_in.hazards) if isinstance(report_in.hazards, list) else report_in.hazards),
+        damage=(", ".join(report_in.damage) if isinstance(report_in.damage, list) else (report_in.infrastructure_damage or report_in.damage)),
         submitter_name=report_in.submitter_name or (user.full_name if user else "Anonymous Citizen"),
-        submitter_phone=report_in.submitter_phone or (user.phone if user else None),
+        submitter_phone=report_in.submitter_phone or report_in.reporter_phone or (user.phone if user else None),
         submitter_notes=report_in.submitter_notes,
         is_anonymous=report_in.is_anonymous,
         is_offline_synced=report_in.is_offline_synced,
@@ -224,17 +225,45 @@ async def submit_emergency_report(
         "incident_id": target_incident.id,
         "incident_number": target_incident.incident_number,
         "incident_type": target_incident.incident_type,
+        "title": target_incident.title,
+        "description": target_incident.description,
+        "status": target_incident.status,
         "severity_class": target_incident.severity_class,
+        "severity_score": target_incident.severity_score,
+        "priority_score": target_incident.priority_score,
         "latitude": target_incident.latitude,
         "longitude": target_incident.longitude,
         "address": target_incident.address,
-        "is_new_incident": is_new_incident
+        "affected_people_estimate": target_incident.affected_people_estimate,
+        "injuries_count": target_incident.injuries_count,
+        "hazards_description": target_incident.hazards_description,
+        "infrastructure_damage": target_incident.infrastructure_damage,
+        "verification_status": target_incident.verification_status,
+        "is_new_incident": is_new_incident,
+        "created_at": target_incident.created_at.isoformat() if target_incident.created_at else datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+
+    # Also broadcast notification event
+    await ws_manager.broadcast({
+        "event": "NEW_NOTIFICATION",
+        "notification_id": notif.id,
+        "title": notif.title,
+        "message": notif.message,
+        "severity": notif.severity,
+        "target_role": notif.target_role,
+        "incident_id": target_incident.id,
+        "timestamp": datetime.now(timezone.utc).isoformat()
     })
 
     return {
-        "status": "INGESTED",
+        "status": target_incident.status,
+        "processing_status": "COMPLETED",
         "incident_id": target_incident.id,
         "incident_number": target_incident.incident_number,
+        "latitude": target_incident.latitude,
+        "longitude": target_incident.longitude,
+        "created_at": target_incident.created_at.isoformat() if target_incident.created_at else datetime.now(timezone.utc).isoformat(),
         "report_id": new_report.id,
         "is_new_incident": is_new_incident,
         "clustering_decision": clustering_decision,
@@ -335,6 +364,246 @@ async def trigger_emergency_sos(
         "incident_number": incident.incident_number,
         "tracking_status": "PENDING_VERIFICATION",
         "message": "Emergency SOS registered. Response telemetry transmitted to central operations."
+    }
+
+@router.post("/emergency-packet")
+async def submit_emergency_packet(
+    packet: EmergencyPacketCreate,
+    request: Request,
+    user: Optional[User] = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    """Section 4 & 6 FLAGSHIP: Unified Emergency Packet for one-handed, low-bandwidth, and offline-synced disaster reporting"""
+    lat = packet.latitude if packet.latitude is not None else 18.5204
+    lng = packet.longitude if packet.longitude is not None else 73.8567
+    
+    # Process base64 image if attached
+    image_url = packet.image_url
+    cv_analysis = None
+    if packet.image_base64:
+        try:
+            img_data = packet.image_base64
+            if "," in img_data:
+                img_data = img_data.split(",")[1]
+            raw_bytes = base64.b64decode(img_data)
+            img_id = str(uuid.uuid4())
+            safe_filename = f"sos_photo_{img_id}.jpg"
+            dest_path = os.path.join(settings.STORAGE_DIR, "uploads", safe_filename)
+            with open(dest_path, "wb") as f:
+                f.write(raw_bytes)
+            image_url = f"/storage/uploads/{safe_filename}"
+            cv_analysis = await VisionProvider.analyze_media(dest_path)
+        except Exception:
+            pass
+
+    # Process base64 voice audio note if attached
+    audio_url = None
+    if packet.voice_audio_base64:
+        try:
+            aud_data = packet.voice_audio_base64
+            if "," in aud_data:
+                aud_data = aud_data.split(",")[1]
+            raw_audio_bytes = base64.b64decode(aud_data)
+            aud_id = str(uuid.uuid4())
+            safe_audio_name = f"sos_voice_{aud_id}.webm"
+            audio_dest_path = os.path.join(settings.STORAGE_DIR, "uploads", safe_audio_name)
+            with open(audio_dest_path, "wb") as f:
+                f.write(raw_audio_bytes)
+            audio_url = f"/storage/uploads/{safe_audio_name}"
+        except Exception:
+            pass
+
+    # Synthesize text description from multimodal inputs
+    desc_parts = []
+    if packet.notes:
+        desc_parts.append(packet.notes)
+    if packet.voice_transcript:
+        desc_parts.append(f"Voice SOS: \"{packet.voice_transcript}\"")
+    if packet.is_trapped:
+        desc_parts.append("CRITICAL: Civilian reports being TRAPPED / unable to evacuate.")
+    if packet.battery_level is not None:
+        desc_parts.append(f"Device Battery: {int(packet.battery_level * 100)}%")
+    if packet.connectivity_type:
+        desc_parts.append(f"Network Quality: {packet.connectivity_type}")
+
+    combined_desc = " | ".join(desc_parts) if desc_parts else "EMERGENCY DISASTER PACKET TRIGGERED"
+
+    # Ingestion into Multi-Agent Orchestrator
+    inc_data = {
+        "incident_type": packet.emergency_type or "Emergency",
+        "description": combined_desc,
+        "latitude": lat,
+        "longitude": lng,
+        "address": packet.address or f"Coordinates [{lat:.5f}, {lng:.5f}]",
+        "affected_people_estimate": packet.affected_people or 1,
+        "injuries_count": packet.injuries or 0,
+        "hazards_description": ", ".join(packet.hazards) if isinstance(packet.hazards, list) else packet.hazards,
+        "infrastructure_damage": packet.damage
+    }
+
+    res_query = await db.execute(select(Resource).where(Resource.is_active == True))
+    all_resources = [
+        {"id": r.id, "resource_name": r.resource_name, "resource_type": r.resource_type, "status": r.status, "latitude": r.latitude, "longitude": r.longitude}
+        for r in res_query.scalars().all()
+    ]
+
+    inc_query = await db.execute(select(Incident).where(Incident.is_active == True))
+    all_incidents = [
+        {"id": inc.id, "title": inc.title, "incident_type": inc.incident_type, "latitude": inc.latitude, "longitude": inc.longitude}
+        for inc in inc_query.scalars().all()
+    ]
+
+    orchestration_res = await AgentOrchestrator.run_pipeline(
+        incident_data=inc_data,
+        reports=[inc_data],
+        available_resources=all_resources,
+        existing_incidents=all_incidents
+    )
+
+    count_res = await db.execute(select(Incident))
+    inc_count = len(count_res.scalars().all()) + 1
+    prefix = "SOS" if packet.emergency_type == "SOS" else "INC"
+    inc_num = f"{prefix}-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{inc_count:04d}"
+
+    incident = Incident(
+        incident_number=inc_num,
+        title=f"🚨 {packet.emergency_type or 'EMERGENCY'} Distress Packet at {packet.address or 'Sector Coords'}",
+        description=combined_desc,
+        incident_type=orchestration_res.get("classification", {}).get("prediction", "Emergency"),
+        status="PENDING_VERIFICATION",
+        severity_score=max(orchestration_res.get("severity", {}).get("severity_score", 8.0), 9.0 if packet.is_trapped else 8.0),
+        severity_class=orchestration_res.get("severity", {}).get("severity_class", "CRITICAL"),
+        priority_score=100.0 if packet.is_trapped else 85.0,
+        latitude=lat,
+        longitude=lng,
+        address=packet.address or f"Coordinates [{lat:.5f}, {lng:.5f}]",
+        affected_people_estimate=packet.affected_people or packet.people_trapped or (1 if packet.is_trapped else 0),
+        injuries_count=packet.injuries or 0,
+        hazards_description=", ".join(packet.hazards) if isinstance(packet.hazards, list) else packet.hazards,
+        infrastructure_damage=packet.damage,
+        verification_status="UNVERIFIED",
+        created_by_id=user.id if user else None
+    )
+    db.add(incident)
+    await db.flush()
+
+    # Create Report record
+    new_report = IncidentReport(
+        incident_id=incident.id,
+        citizen_id=user.id if user else None,
+        report_type="EMERGENCY_PACKET",
+        raw_text=combined_desc,
+        transcript=packet.voice_transcript,
+        latitude=lat,
+        longitude=lng,
+        address=incident.address,
+        injuries_reported=packet.injuries or 0,
+        people_affected=packet.affected_people or packet.people_trapped or (1 if packet.is_trapped else 0),
+        hazards=", ".join(packet.hazards) if isinstance(packet.hazards, list) else packet.hazards,
+        damage=packet.damage,
+        submitter_name=packet.reporter_name or (user.full_name if user else "Citizen in Distress"),
+        submitter_phone=packet.reporter_phone or (user.phone if user else None),
+        is_anonymous=packet.is_anonymous,
+        is_offline_synced=packet.is_offline_synced,
+        sync_id=packet.sync_id or packet.client_uuid
+    )
+    db.add(new_report)
+    await db.flush()
+
+    # Attach Media if photo / video / audio
+    if image_url:
+        media_rec = IncidentMedia(
+            incident_id=incident.id,
+            report_id=new_report.id,
+            media_type="IMAGE",
+            file_url=image_url,
+            file_name=os.path.basename(image_url),
+            cv_analysis_json=cv_analysis
+        )
+        db.add(media_rec)
+
+    if audio_url:
+        audio_rec = IncidentMedia(
+            incident_id=incident.id,
+            report_id=new_report.id,
+            media_type="AUDIO",
+            file_url=audio_url,
+            file_name=os.path.basename(audio_url),
+            cv_analysis_json={"status": "AUDIO_PROCESSED", "transcript": packet.voice_transcript}
+        )
+        db.add(audio_rec)
+
+    if packet.video_url:
+        vid_rec = IncidentMedia(
+            incident_id=incident.id,
+            report_id=new_report.id,
+            media_type="VIDEO",
+            file_url=packet.video_url,
+            file_name=os.path.basename(packet.video_url),
+            cv_analysis_json={"status": "VIDEO_RECEIVED", "note": "Video received — automated deep video analysis queued."}
+        )
+        db.add(vid_rec)
+
+    # Initial Timeline Entry with Battery and Telemetry
+    battery_text = f"Battery: {int(packet.battery_level * 100)}%" if packet.battery_level is not None else "Battery: Normal"
+    timeline_event = IncidentTimeline(
+        incident_id=incident.id,
+        event_type="EMERGENCY_PACKET_INGESTED",
+        title="Emergency Packet Ingested",
+        description=f"Rapid multimodal packet received ({packet.connectivity_type or 'ONLINE'}, {battery_text}). AI Severity: {incident.severity_class} ({incident.severity_score}/10). Pending dispatcher verification.",
+        previous_status=None,
+        new_status="PENDING_VERIFICATION",
+        actor_name=user.full_name if user else "Citizen Distress Channel",
+        actor_role=user.role if user else "CITIZEN"
+    )
+    db.add(timeline_event)
+
+    # Dispatcher Urgent Alert Notification
+    notif = Notification(
+        title=f"🚨 EMERGENCY PACKET: {incident.incident_type}",
+        message=f"{incident.severity_class} distress signal from {incident.address}. Immediate human triage required.",
+        notification_type="ALERT",
+        severity="CRITICAL",
+        incident_id=incident.id,
+        target_role="DISPATCHER"
+    )
+    db.add(notif)
+    await db.commit()
+
+    # Real-time WebSocket broadcasts
+    await ws_manager.broadcast({
+        "event": "NEW_REPORT_INGESTED",
+        "incident_id": incident.id,
+        "incident_number": incident.incident_number,
+        "incident_type": incident.incident_type,
+        "title": incident.title,
+        "description": incident.description,
+        "status": incident.status,
+        "severity_class": incident.severity_class,
+        "severity_score": incident.severity_score,
+        "priority_score": incident.priority_score,
+        "latitude": incident.latitude,
+        "longitude": incident.longitude,
+        "address": incident.address,
+        "battery_level": packet.battery_level,
+        "connectivity_type": packet.connectivity_type,
+        "is_trapped": packet.is_trapped,
+        "image_url": image_url,
+        "video_url": packet.video_url,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+
+    return {
+        "status": "EMERGENCY_PACKET_RECEIVED",
+        "incident_id": incident.id,
+        "incident_number": incident.incident_number,
+        "latitude": incident.latitude,
+        "longitude": incident.longitude,
+        "severity_class": incident.severity_class,
+        "severity_score": incident.severity_score,
+        "created_at": incident.created_at.isoformat() if incident.created_at else datetime.now(timezone.utc).isoformat(),
+        "processing_status": "COMPLETED",
+        "tracking_status": "PENDING_VERIFICATION"
     }
 
 @router.post("/upload")

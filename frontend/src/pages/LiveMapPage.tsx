@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Map, Layers, Eye, EyeOff, RefreshCw, Radio, 
-  Truck, Users, AlertTriangle, ShieldCheck, CloudRain 
+  Map as MapIcon, Layers, RefreshCw, 
+  Truck, Users, AlertTriangle, ShieldCheck, CloudRain, Building2, Home
 } from 'lucide-react';
 import { api } from '../services/api';
 import { EmergencyMap } from '../components/map/EmergencyMap';
+import { useLanguage } from '../context/LanguageContext';
 
 export const LiveMapPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [layersData, setLayersData] = useState<any>(null);
   const [weatherData, setWeatherData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Layer Visibility Toggles (Section 40)
+  // Layer Visibility Toggles
   const [showIncidents, setShowIncidents] = useState(true);
   const [showResources, setShowResources] = useState(true);
   const [showResponders, setShowResponders] = useState(true);
@@ -27,6 +29,7 @@ export const LiveMapPage: React.FC = () => {
 
   const fetchLayers = async () => {
     try {
+      setLoading(true);
       const data = await api.map.layers();
       setLayersData(data);
       if (data.center) {
@@ -51,45 +54,47 @@ export const LiveMapPage: React.FC = () => {
   });
 
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col font-sans relative bg-slate-950">
+    <div className="h-[calc(100vh-64px)] flex flex-col font-sans relative bg-ivory-50 dark:bg-forest-950 text-forest-900 dark:text-sage-100">
       
-      {/* Top Floating Control Bar */}
-      <div className="p-3 bg-slate-900/95 backdrop-blur border-b border-slate-800 z-10 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+      {/* Top Control Bar */}
+      <div className="p-3 bg-white/95 dark:bg-forest-900/95 backdrop-blur border-b border-ivory-300 dark:border-forest-800 z-10 flex flex-wrap items-center justify-between gap-3 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-white uppercase tracking-wider">
-            <Map className="w-4 h-4 text-blue-400" />
-            <span>Geospatial Tactical Command Map</span>
+          <div className="flex items-center gap-2 font-mono text-xs font-bold text-forest-950 dark:text-white uppercase tracking-wider">
+            <div className="p-1.5 rounded bg-forest-50 dark:bg-forest-800 text-forest-700 dark:text-sage-300">
+              <MapIcon className="w-4 h-4" />
+            </div>
+            <span>{t('navLiveMap', 'Geospatial Tactical Command Map')}</span>
           </div>
 
           {weatherData && (
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-slate-950 rounded-lg border border-slate-800 text-[11px] text-slate-300">
-              <CloudRain className="w-3.5 h-3.5 text-blue-400" />
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-ivory-100 dark:bg-forest-950 rounded-lg border border-ivory-300 dark:border-forest-800 text-[11px] text-forest-800 dark:text-sage-300 font-mono">
+              <CloudRain className="w-3.5 h-3.5 text-forest-600 dark:text-sage-400" />
               <span>{weatherData.condition} ({weatherData.temperature_c}°C)</span>
-              <span className="text-slate-500 font-mono">Rain: {weatherData.rainfall_mm}mm</span>
+              <span className="text-forest-400 dark:text-sage-500 font-mono">| Rain: {weatherData.rainfall_mm}mm</span>
             </div>
           )}
         </div>
 
         {/* Filter Dropdowns & Layer Checkboxes */}
-        <div className="flex flex-wrap items-center gap-3 text-xs">
+        <div className="flex flex-wrap items-center gap-2.5 text-xs">
           <select
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-300 focus:outline-none"
+            className="bg-ivory-100 dark:bg-forest-950 border border-ivory-300 dark:border-forest-700 rounded-md px-2.5 py-1 text-forest-900 dark:text-sage-200 focus:outline-none focus:ring-1 focus:ring-forest-600 font-medium"
           >
-            <option value="">All Severities</option>
-            <option value="CRITICAL">Critical Threat</option>
-            <option value="HIGH">High Severity</option>
-            <option value="MEDIUM">Medium Severity</option>
-            <option value="LOW">Low Severity</option>
+            <option value="">{t('filterAllSeverities', 'All Severities')}</option>
+            <option value="CRITICAL">CRITICAL</option>
+            <option value="HIGH">HIGH</option>
+            <option value="MEDIUM">MEDIUM</option>
+            <option value="LOW">LOW</option>
           </select>
 
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-300 focus:outline-none"
+            className="bg-ivory-100 dark:bg-forest-950 border border-ivory-300 dark:border-forest-700 rounded-md px-2.5 py-1 text-forest-900 dark:text-sage-200 focus:outline-none focus:ring-1 focus:ring-forest-600 font-medium"
           >
-            <option value="">All Disaster Types</option>
+            <option value="">{t('filterAllTypes', 'All Hazard Types')}</option>
             <option value="Flood">Flood</option>
             <option value="Fire">Fire</option>
             <option value="Building Collapse">Building Collapse</option>
@@ -97,44 +102,60 @@ export const LiveMapPage: React.FC = () => {
           </select>
 
           {/* Layer toggles */}
-          <div className="flex items-center gap-2 border-l border-slate-800 pl-3">
+          <div className="flex items-center gap-1.5 border-l border-ivory-300 dark:border-forest-800 pl-3">
             <button
               onClick={() => setShowIncidents(!showIncidents)}
-              className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
-                showIncidents ? 'bg-red-950/80 border-red-700 text-red-300' : 'bg-slate-950 border-slate-800 text-slate-500'
+              className={`px-2.5 py-1 rounded border text-[11px] font-semibold transition-all ${
+                showIncidents ? 'bg-red-100 border-red-300 text-red-900 dark:bg-red-950 dark:border-red-700 dark:text-red-300 shadow-sm' : 'bg-ivory-100 dark:bg-forest-950 border-ivory-300 dark:border-forest-800 text-forest-600 dark:text-sage-500'
               }`}
             >
               Incidents
             </button>
             <button
               onClick={() => setShowResources(!showResources)}
-              className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
-                showResources ? 'bg-blue-950/80 border-blue-700 text-blue-300' : 'bg-slate-950 border-slate-800 text-slate-500'
+              className={`px-2.5 py-1 rounded border text-[11px] font-semibold transition-all ${
+                showResources ? 'bg-forest-800 border-forest-900 text-ivory-100 dark:bg-forest-700 dark:border-forest-600 dark:text-sage-100 shadow-sm' : 'bg-ivory-100 dark:bg-forest-950 border-ivory-300 dark:border-forest-800 text-forest-600 dark:text-sage-500'
               }`}
             >
               Resources
             </button>
             <button
+              onClick={() => setShowResponders(!showResponders)}
+              className={`px-2.5 py-1 rounded border text-[11px] font-semibold transition-all ${
+                showResponders ? 'bg-blue-100 border-blue-300 text-blue-900 dark:bg-blue-950 dark:border-blue-700 dark:text-blue-300 shadow-sm' : 'bg-ivory-100 dark:bg-forest-950 border-ivory-300 dark:border-forest-800 text-forest-600 dark:text-sage-500'
+              }`}
+            >
+              Responders
+            </button>
+            <button
               onClick={() => setShowRiskZones(!showRiskZones)}
-              className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
-                showRiskZones ? 'bg-amber-950/80 border-amber-700 text-amber-300' : 'bg-slate-950 border-slate-800 text-slate-500'
+              className={`px-2.5 py-1 rounded border text-[11px] font-semibold transition-all ${
+                showRiskZones ? 'bg-amber-100 border-amber-300 text-amber-900 dark:bg-amber-950 dark:border-amber-700 dark:text-amber-300 shadow-sm' : 'bg-ivory-100 dark:bg-forest-950 border-ivory-300 dark:border-forest-800 text-forest-600 dark:text-sage-500'
               }`}
             >
               Risk Zones
             </button>
             <button
               onClick={() => setShowHospitals(!showHospitals)}
-              className={`px-2 py-1 rounded border text-[11px] font-semibold transition-colors ${
-                showHospitals ? 'bg-emerald-950/80 border-emerald-700 text-emerald-300' : 'bg-slate-950 border-slate-800 text-slate-500'
+              className={`px-2.5 py-1 rounded border text-[11px] font-semibold transition-all ${
+                showHospitals ? 'bg-emerald-100 border-emerald-300 text-emerald-900 dark:bg-emerald-950 dark:border-emerald-700 dark:text-emerald-300 shadow-sm' : 'bg-ivory-100 dark:bg-forest-950 border-ivory-300 dark:border-forest-800 text-forest-600 dark:text-sage-500'
               }`}
             >
               Hospitals
+            </button>
+            <button
+              onClick={() => setShowShelters(!showShelters)}
+              className={`px-2.5 py-1 rounded border text-[11px] font-semibold transition-all ${
+                showShelters ? 'bg-purple-100 border-purple-300 text-purple-900 dark:bg-purple-950 dark:border-purple-700 dark:text-purple-300 shadow-sm' : 'bg-ivory-100 dark:bg-forest-950 border-ivory-300 dark:border-forest-800 text-forest-600 dark:text-sage-500'
+              }`}
+            >
+              Shelters
             </button>
           </div>
 
           <button
             onClick={fetchLayers}
-            className="p-1 hover:bg-slate-800 text-slate-400 rounded"
+            className="p-1.5 hover:bg-ivory-200 dark:hover:bg-forest-800 text-forest-700 dark:text-sage-300 rounded border border-ivory-300 dark:border-forest-700"
             title="Reload layers"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
