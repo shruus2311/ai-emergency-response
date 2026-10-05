@@ -312,7 +312,7 @@ export const EmergencyModePage: React.FC = () => {
           <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md border ${
             isLowBattery 
               ? 'bg-red-100 border-red-300 text-red-800 dark:bg-red-950/80 dark:border-red-600 dark:text-red-400 animate-pulse font-bold' 
-              : 'bg-white dark:bg-forest-900 border-ivory-300 dark:border-forest-700 text-forest-800 dark:text-sage-300'
+              : 'bg-ivory-50 dark:bg-forest-900 border-ivory-300 dark:border-forest-700 text-forest-800 dark:text-sage-300'
           }`}>
             {isCharging ? <BatteryCharging className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Battery className="w-3.5 h-3.5" />}
             <span>{batteryLevel !== null ? `${Math.round(batteryLevel * 100)}%` : 'BATTERY UNKNOWN'}</span>
@@ -361,7 +361,7 @@ export const EmergencyModePage: React.FC = () => {
 
         {/* Status Notification */}
         {statusMessage && (
-          <div className="w-full p-3 bg-white dark:bg-forest-900 border border-ivory-300 dark:border-forest-700 rounded-xl text-xs text-center font-mono text-emerald-700 dark:text-emerald-400 flex items-center justify-center gap-2">
+          <div className="w-full p-3 bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-700 rounded-xl text-xs text-center font-mono text-emerald-700 dark:text-emerald-400 flex items-center justify-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
             <span>{statusMessage}</span>
           </div>
@@ -377,7 +377,7 @@ export const EmergencyModePage: React.FC = () => {
             className={`h-24 rounded-2xl border flex flex-col items-center justify-center gap-1 font-bold text-sm transition-all active:scale-95 ${
               photoPreview 
                 ? 'bg-emerald-100 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-500 text-emerald-900 dark:text-emerald-300 shadow-sm' 
-                : 'bg-white dark:bg-forest-900 hover:bg-ivory-100 dark:hover:bg-forest-800 border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-100'
+                : 'bg-ivory-50 dark:bg-forest-900 hover:bg-ivory-100 dark:hover:bg-forest-800 border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-100'
             }`}
           >
             <Camera className={`w-7 h-7 ${photoPreview ? 'text-emerald-600 dark:text-emerald-400' : 'text-forest-700 dark:text-sage-300'}`} />
@@ -395,7 +395,7 @@ export const EmergencyModePage: React.FC = () => {
                 ? 'bg-red-100 dark:bg-red-900 border-red-400 dark:border-red-500 text-red-900 dark:text-white animate-pulse'
                 : voiceTranscript
                 ? 'bg-purple-100 dark:bg-purple-950/80 border-purple-300 dark:border-purple-500 text-purple-900 dark:text-purple-300'
-                : 'bg-white dark:bg-forest-900 hover:bg-ivory-100 dark:hover:bg-forest-800 border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-100'
+                : 'bg-ivory-50 dark:bg-forest-900 hover:bg-ivory-100 dark:hover:bg-forest-800 border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-100'
             }`}
           >
             <Mic className={`w-7 h-7 ${voiceRecording ? 'text-red-600 dark:text-red-400 animate-bounce' : 'text-forest-700 dark:text-sage-300'}`} />
@@ -413,7 +413,7 @@ export const EmergencyModePage: React.FC = () => {
         )}
 
         {/* Critical Missing Info Question */}
-        <div className="w-full p-3 bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-2xl flex flex-col gap-2">
+        <div className="w-full p-3 bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-2xl flex flex-col gap-2">
           <div className="text-xs font-bold text-forest-900 dark:text-sage-200 flex items-center justify-between">
             <span>Are you trapped or unable to evacuate?</span>
             {isTrapped !== null && (
@@ -449,7 +449,7 @@ export const EmergencyModePage: React.FC = () => {
         </div>
 
         {/* GPS Location Telemetry Bar */}
-        <div className="w-full p-2.5 bg-white dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 rounded-xl flex items-center justify-between text-xs font-mono">
+        <div className="w-full p-2.5 bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 rounded-xl flex items-center justify-between text-xs font-mono">
           <div className="flex items-center gap-1.5 text-forest-800 dark:text-sage-300 truncate">
             <MapPin className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0" />
             <span className="truncate">{address || 'Locating GPS...'}</span>

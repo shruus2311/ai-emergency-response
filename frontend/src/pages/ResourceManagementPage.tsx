@@ -94,7 +94,7 @@ export const ResourceManagementPage: React.FC = () => {
       {/* Resource Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {resources.map((res) => (
-          <div key={res.id} className="bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4 hover:shadow-md transition-shadow">
+          <div key={res.id} className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-ivory-200 text-forest-800 dark:bg-forest-950 dark:text-sage-300 border border-ivory-300 dark:border-forest-700">
@@ -128,7 +128,7 @@ export const ResourceManagementPage: React.FC = () => {
       {/* Add Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+          <div className="bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <h2 className="font-serif font-bold text-xl text-forest-950 dark:text-ivory-50">Register Emergency Unit</h2>
             <form onSubmit={handleCreateResource} className="space-y-4 text-xs">
               <div>

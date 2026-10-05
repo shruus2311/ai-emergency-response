@@ -104,7 +104,7 @@ export const SitrepPage: React.FC = () => {
 
       {/* Printable SITREP Document Preview */}
       {sitrep ? (
-        <div className="bg-white dark:bg-forest-900/95 border border-ivory-300 dark:border-forest-800 rounded-2xl p-6 sm:p-10 shadow-sm text-forest-950 dark:text-ivory-50 space-y-6 print:bg-white print:text-black print:border-none">
+        <div className="bg-ivory-50 dark:bg-forest-900/95 border border-ivory-300 dark:border-forest-800 rounded-2xl p-6 sm:p-10 shadow-sm text-forest-950 dark:text-ivory-50 space-y-6 print:bg-white print:text-black print:border-none">
           
           {/* Document Header */}
           <div className="border-b border-ivory-200 dark:border-forest-800 pb-4 flex items-start justify-between">

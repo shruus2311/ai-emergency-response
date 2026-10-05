@@ -63,7 +63,7 @@ export const AdminDashboard: React.FC = () => {
       </div>
 
       {/* User Management Table */}
-      <div className="bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl overflow-hidden shadow-sm p-5 space-y-4">
+      <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl overflow-hidden shadow-sm p-5 space-y-4">
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4 text-forest-700 dark:text-sage-300" />
           <h2 className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider">
@@ -120,7 +120,7 @@ export const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Immutable Audit Logs Table */}
-      <div className="bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl overflow-hidden shadow-sm p-5 space-y-4">
+      <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl overflow-hidden shadow-sm p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Lock className="w-4 h-4 text-forest-700 dark:text-sage-300" />

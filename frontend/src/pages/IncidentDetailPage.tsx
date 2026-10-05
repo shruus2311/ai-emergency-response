@@ -306,7 +306,7 @@ export const IncidentDetailPage: React.FC = () => {
                 factors.map((f: any, idx: number) => (
                   <div key={idx} className="p-2.5 bg-ivory-50 dark:bg-forest-950 rounded border border-ivory-300 dark:border-forest-800 flex items-start justify-between gap-3">
                     <div>
-                      <div className="font-bold text-forest-950 dark:text-slate-200 flex items-center gap-1.5">
+                      <div className="font-bold text-forest-950 dark:text-ivory-50 flex items-center gap-1.5">
                         <span>{f.factor}</span>
                         {f.raw_value && <span className="text-[10px] font-mono text-sage-600 dark:text-sage-400">[{f.raw_value}]</span>}
                       </div>
@@ -375,14 +375,14 @@ export const IncidentDetailPage: React.FC = () => {
                 return (
                   <div key={rpt.id} className="p-3 bg-ivory-50 dark:bg-forest-950 rounded border border-ivory-300 dark:border-forest-800 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-forest-950 dark:text-slate-200">
+                      <span className="font-bold text-forest-950 dark:text-ivory-50">
                         {rpt.report_type} ({rpt.submitter_name || 'Anonymous'})
                       </span>
                       <span className="text-[10px] text-sage-600 dark:text-sage-400 font-mono">
                         {new Date(rpt.created_at).toLocaleTimeString()}
                       </span>
                     </div>
-                    <p className="text-forest-900 dark:text-slate-300 leading-relaxed font-sans">{rpt.raw_text}</p>
+                    <p className="text-forest-900 dark:text-sage-300 leading-relaxed font-sans">{rpt.raw_text}</p>
                     
                     {rpt.transcript && (
                       <div className="p-2.5 bg-sage-50 dark:bg-forest-900 border border-sage-200 dark:border-forest-700 rounded text-[11px] text-forest-900 dark:text-sage-200 space-y-1">
@@ -523,7 +523,7 @@ export const IncidentDetailPage: React.FC = () => {
                           </div>
                           <audio controls className="w-full h-10 rounded" src={med.file_url} />
                           {cv.transcript && (
-                            <div className="text-[11px] text-forest-900 dark:text-slate-300 italic pt-1">
+                            <div className="text-[11px] text-forest-900 dark:text-sage-300 italic pt-1">
                               Transcript: "{cv.transcript}"
                             </div>
                           )}
@@ -561,9 +561,9 @@ export const IncidentDetailPage: React.FC = () => {
                       {rec.priority}
                     </span>
                   </div>
-                  <p className="text-forest-900 dark:text-slate-300">{rec.action}</p>
+                  <p className="text-forest-900 dark:text-sage-300">{rec.action}</p>
                   <div className="text-[11px] text-sage-800 dark:text-sage-400 bg-ivory-100 dark:bg-forest-900 p-2 rounded border border-ivory-300 dark:border-forest-800">
-                    <strong className="text-forest-900 dark:text-slate-300">Rationale:</strong> {rec.rationale}
+                    <strong className="text-forest-900 dark:text-sage-300">Rationale:</strong> {rec.rationale}
                   </div>
                   
                   {/* Dispatch Authorization Button */}
@@ -622,7 +622,7 @@ export const IncidentDetailPage: React.FC = () => {
               <div className="space-y-2 text-xs">
                 {assignedUnits.map((a: any) => (
                   <div key={a.id} className="p-2.5 bg-ivory-50 dark:bg-forest-950 rounded border border-ivory-300 dark:border-forest-800 space-y-1">
-                    <div className="flex items-center justify-between font-bold text-forest-950 dark:text-slate-200">
+                    <div className="flex items-center justify-between font-bold text-forest-950 dark:text-ivory-50">
                       <span>Unit Assignment #{a.id.substring(0, 6)}</span>
                       <span className="text-[10px] text-forest-700 dark:text-sage-300 font-mono">{a.status}</span>
                     </div>
@@ -692,7 +692,7 @@ export const IncidentDetailPage: React.FC = () => {
               {incident.timeline?.map((evt: any) => (
                 <div key={evt.id} className="relative pl-4 border-l-2 border-ivory-300 dark:border-forest-800 space-y-0.5">
                   <div className="w-2 h-2 rounded-full bg-forest-700 dark:bg-sage-400 absolute -left-[5px] top-1" />
-                  <div className="font-bold text-forest-950 dark:text-slate-200">{evt.title}</div>
+                  <div className="font-bold text-forest-950 dark:text-ivory-50">{evt.title}</div>
                   <p className="text-sage-800 dark:text-sage-400 text-[11px] leading-relaxed">{evt.description}</p>
                   <div className="text-[10px] text-sage-600 dark:text-sage-500 font-mono">
                     {new Date(evt.created_at).toLocaleTimeString()} by {evt.actor_name || 'System'}

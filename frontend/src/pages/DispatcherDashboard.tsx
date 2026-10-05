@@ -201,18 +201,18 @@ export const DispatcherDashboard: React.FC<Props> = ({ onOpenCopilot }) => {
 
       {/* KPI Operational Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-reference-darkCard border border-stone-200 dark:border-stone-800 p-5 rounded-3xl shadow-ref">
-          <div className="text-[11px] font-mono font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider flex items-center justify-between">
+        <div className="bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 p-5 rounded-2xl shadow-sm">
+          <div className="text-[11px] font-mono font-bold text-forest-800 dark:text-sage-400 uppercase tracking-wider flex items-center justify-between">
             <span>{t('kpiActiveIncidents', 'Active Incidents')}</span>
-            <Radio className="w-4 h-4 text-moss-600 dark:text-moss-400" />
+            <Radio className="w-4 h-4 text-forest-700 dark:text-sage-300" />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-stone-900 dark:text-white mt-1 font-mono">
+          <div className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-1 font-mono">
             {loading ? '-' : activeCount}
           </div>
-          <div className="text-[10px] text-stone-500 dark:text-stone-400 mt-1">{t('kpiLiveTracking', 'Live tracking active perimeters')}</div>
+          <div className="text-[10px] text-sage-700 dark:text-sage-400 mt-1">{t('kpiLiveTracking', 'Live tracking active perimeters')}</div>
         </div>
 
-        <div className="bg-white dark:bg-reference-darkCard border border-red-200 dark:border-red-900/60 p-5 rounded-3xl shadow-ref">
+        <div className="bg-ivory-50 dark:bg-forest-900 border border-red-300 dark:border-red-900/60 p-5 rounded-2xl shadow-sm">
           <div className="text-[11px] font-mono font-bold text-red-700 dark:text-red-400 uppercase tracking-wider flex items-center justify-between">
             <span>{t('kpiCriticalThreat', 'Critical Threat')}</span>
             <AlertOctagon className="w-4 h-4 text-red-600 dark:text-red-500 animate-pulse" />
@@ -220,45 +220,45 @@ export const DispatcherDashboard: React.FC<Props> = ({ onOpenCopilot }) => {
           <div className="text-2xl sm:text-3xl font-bold text-red-700 dark:text-red-400 mt-1 font-mono">
             {loading ? '-' : criticalCount}
           </div>
-          <div className="text-[10px] text-stone-500 dark:text-stone-400 mt-1">{t('kpiHighRisk', 'Severity score > 8.0/10')}</div>
+          <div className="text-[10px] text-sage-700 dark:text-sage-400 mt-1">{t('kpiHighRisk', 'Severity score > 8.0/10')}</div>
         </div>
 
-        <div className="bg-white dark:bg-reference-darkCard border border-amber-200 dark:border-yellow-900/60 p-5 rounded-3xl shadow-ref">
-          <div className="text-[11px] font-mono font-bold text-amber-800 dark:text-yellow-400 uppercase tracking-wider flex items-center justify-between">
+        <div className="bg-ivory-50 dark:bg-forest-900 border border-amber-300 dark:border-amber-700/60 p-5 rounded-2xl shadow-sm">
+          <div className="text-[11px] font-mono font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider flex items-center justify-between">
             <span>{t('kpiPendingVerif', 'Pending Verification')}</span>
-            <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-yellow-500" />
+            <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-500" />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-amber-800 dark:text-yellow-300 mt-1 font-mono">
+          <div className="text-2xl sm:text-3xl font-bold text-amber-800 dark:text-amber-300 mt-1 font-mono">
             {loading ? '-' : pendingVerifCount}
           </div>
-          <div className="text-[10px] text-stone-500 dark:text-stone-400 mt-1">{t('kpiOperatorReview', 'Requires operator review')}</div>
+          <div className="text-[10px] text-sage-700 dark:text-sage-400 mt-1">{t('kpiOperatorReview', 'Requires operator review')}</div>
         </div>
 
-        <div className="bg-white dark:bg-reference-darkCard border border-stone-200 dark:border-stone-800 p-5 rounded-3xl shadow-ref">
-          <div className="text-[11px] font-mono font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider flex items-center justify-between">
+        <div className="bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 p-5 rounded-2xl shadow-sm">
+          <div className="text-[11px] font-mono font-bold text-forest-800 dark:text-sage-400 uppercase tracking-wider flex items-center justify-between">
             <span>{t('kpiFleetAvailable', 'Fleet Available')}</span>
-            <Truck className="w-4 h-4 text-moss-600 dark:text-moss-400" />
+            <Truck className="w-4 h-4 text-forest-700 dark:text-sage-300" />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-moss-700 dark:text-moss-400 mt-1 font-mono">
+          <div className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-1 font-mono">
             {loading ? '-' : availableResourcesCount} / {resources.length}
           </div>
-          <div className="text-[10px] text-stone-500 dark:text-stone-400 mt-1">{t('kpiStagedUnits', 'Staged rescue apparatus')}</div>
+          <div className="text-[10px] text-sage-700 dark:text-sage-400 mt-1">{t('kpiStagedUnits', 'Staged rescue apparatus')}</div>
         </div>
       </div>
 
       {/* Geospatial Map Overview */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <div className="text-xs font-bold text-stone-900 dark:text-stone-100 uppercase tracking-wider font-mono">
+          <div className="text-xs font-bold text-forest-950 dark:text-ivory-50 uppercase tracking-wider font-mono">
             {t('navLiveMap', 'Live GIS Situation Map')}
           </div>
-          <Link to="/map" className="text-xs text-moss-700 dark:text-moss-400 hover:underline font-semibold flex items-center gap-1">
+          <Link to="/map" className="text-xs text-forest-700 dark:text-sage-400 hover:underline font-semibold flex items-center gap-1">
             <span>{t('viewFullscreenMap', 'Fullscreen Map & GIS Layers')}</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="rounded-3xl border border-stone-200 dark:border-stone-800 overflow-hidden shadow-ref">
+        <div className="rounded-2xl border border-ivory-300 dark:border-forest-800 overflow-hidden shadow-sm">
           <EmergencyMap
             incidents={incidents}
             resources={resources}
@@ -270,13 +270,13 @@ export const DispatcherDashboard: React.FC<Props> = ({ onOpenCopilot }) => {
       </div>
 
       {/* Operations View Mode Tab Switcher */}
-      <div className="flex items-center gap-3 border-b border-stone-200 dark:border-stone-800 pb-3">
+      <div className="flex items-center gap-3 border-b border-ivory-300 dark:border-forest-800 pb-3">
         <button
           onClick={() => setActiveTab('INCIDENTS')}
           className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold font-mono uppercase tracking-wider transition-all ${
             activeTab === 'INCIDENTS'
-              ? 'bg-moss-600 text-white shadow-sm'
-              : 'bg-white dark:bg-reference-darkCard text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white border border-stone-200 dark:border-stone-800'
+              ? 'bg-forest-800 text-ivory-50 shadow-sm'
+              : 'bg-ivory-50 dark:bg-forest-900 text-forest-900 dark:text-sage-300 hover:text-forest-950 dark:hover:text-white border border-ivory-300 dark:border-forest-800'
           }`}
         >
           <List className="w-4 h-4" />
@@ -287,8 +287,8 @@ export const DispatcherDashboard: React.FC<Props> = ({ onOpenCopilot }) => {
           onClick={() => setActiveTab('SITUATION_INTELLIGENCE')}
           className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold font-mono uppercase tracking-wider transition-all ${
             activeTab === 'SITUATION_INTELLIGENCE'
-              ? 'bg-moss-600 text-white shadow-sm'
-              : 'bg-white dark:bg-reference-darkCard text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white border border-stone-200 dark:border-stone-800'
+              ? 'bg-forest-800 text-ivory-50 shadow-sm'
+              : 'bg-ivory-50 dark:bg-forest-900 text-forest-900 dark:text-sage-300 hover:text-forest-950 dark:hover:text-white border border-ivory-300 dark:border-forest-800'
           }`}
         >
           <Globe2 className="w-4 h-4" />
@@ -298,7 +298,7 @@ export const DispatcherDashboard: React.FC<Props> = ({ onOpenCopilot }) => {
 
       {/* Tab 1: Live Incidents Table */}
       {activeTab === 'INCIDENTS' && (
-        <div className="bg-white dark:bg-reference-darkCard border border-stone-200 dark:border-stone-800 rounded-3xl overflow-hidden shadow-ref space-y-4 p-5 sm:p-6">
+        <div className="bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 rounded-2xl overflow-hidden shadow-sm space-y-4 p-5 sm:p-6">
           <div className="p-4 border-b border-ivory-300 dark:border-forest-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
             
             <div className="relative flex-1">

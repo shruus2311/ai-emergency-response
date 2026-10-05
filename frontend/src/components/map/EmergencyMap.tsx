@@ -190,20 +190,20 @@ export const EmergencyMap: React.FC<Props> = ({
               }}
             >
               <Popup>
-                <div className="p-1 min-w-[200px] text-slate-900">
+                <div className="p-1 min-w-[200px] text-forest-950">
                   <div className="flex items-center justify-between font-bold text-xs mb-1">
-                    <span className="text-red-600">#{inc.incident_number}</span>
+                    <span className="text-red-700">#{inc.incident_number}</span>
                     <span className="text-[10px] bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-mono">
                       {inc.severity_class} ({inc.severity_score}/10)
                     </span>
                   </div>
                   <div className="font-semibold text-sm leading-snug">{inc.title}</div>
-                  <div className="text-xs text-slate-600 mt-1 line-clamp-2">{inc.description}</div>
-                  <div className="mt-2 text-[11px] font-mono text-slate-500">
+                  <div className="text-xs text-sage-700 mt-1 line-clamp-2">{inc.description}</div>
+                  <div className="mt-2 text-[11px] font-mono text-sage-600">
                     Status: <strong>{inc.status}</strong>
                   </div>
                   {inc.injuries_count ? (
-                    <div className="text-[11px] text-red-600 font-bold">
+                    <div className="text-[11px] text-red-700 font-bold">
                       {inc.injuries_count} Injuries Reported
                     </div>
                   ) : null}
@@ -234,11 +234,11 @@ export const EmergencyMap: React.FC<Props> = ({
             icon={resourceIcon(res.resource_type)}
           >
             <Popup>
-              <div className="p-1 text-slate-900 min-w-[180px]">
-                <div className="font-bold text-xs text-blue-700">{res.resource_name}</div>
-                <div className="text-xs text-slate-600 font-mono">Type: {res.resource_type}</div>
-                <div className="text-xs mt-1">Status: <span className="font-bold text-emerald-700">{res.status}</span></div>
-                {res.station_name && <div className="text-[11px] text-slate-500">Base: {res.station_name}</div>}
+              <div className="p-1 text-forest-950 min-w-[180px]">
+                <div className="font-bold text-xs text-forest-800">{res.resource_name}</div>
+                <div className="text-xs text-sage-700 font-mono">Type: {res.resource_type}</div>
+                <div className="text-xs mt-1">Status: <span className="font-bold text-forest-700">{res.status}</span></div>
+                {res.station_name && <div className="text-[11px] text-sage-600">Base: {res.station_name}</div>}
               </div>
             </Popup>
           </Marker>
@@ -253,11 +253,11 @@ export const EmergencyMap: React.FC<Props> = ({
               icon={responderIcon}
             >
               <Popup>
-                <div className="p-1 text-slate-900">
-                  <div className="font-bold text-xs text-cyan-800">{resp.responder_name}</div>
-                  <div className="text-xs text-slate-600">Badge: {resp.badge_number}</div>
-                  <div className="text-xs text-slate-500">{resp.specialization}</div>
-                  <div className="text-[11px] font-bold text-emerald-700 mt-1">{resp.status}</div>
+                <div className="p-1 text-forest-950">
+                  <div className="font-bold text-xs text-forest-800">{resp.responder_name}</div>
+                  <div className="text-xs text-sage-700">Badge: {resp.badge_number}</div>
+                  <div className="text-xs text-sage-600">{resp.specialization}</div>
+                  <div className="text-[11px] font-bold text-forest-700 mt-1">{resp.status}</div>
                 </div>
               </Popup>
             </Marker>
@@ -272,9 +272,9 @@ export const EmergencyMap: React.FC<Props> = ({
             icon={hospitalIcon}
           >
             <Popup>
-              <div className="p-1 text-slate-900">
-                <div className="font-bold text-xs text-emerald-800">{hosp.name}</div>
-                <div className="text-xs text-slate-600">{hosp.trauma_center_level}</div>
+              <div className="p-1 text-forest-950">
+                <div className="font-bold text-xs text-forest-800">{hosp.name}</div>
+                <div className="text-xs text-sage-700">{hosp.trauma_center_level}</div>
                 <div className="text-xs font-semibold mt-1">
                   Beds: {hosp.available_beds} available / {hosp.total_beds} total
                 </div>
@@ -291,10 +291,10 @@ export const EmergencyMap: React.FC<Props> = ({
             icon={shelterIcon}
           >
             <Popup>
-              <div className="p-1 text-slate-900">
-                <div className="font-bold text-xs text-purple-800">{shelter.name}</div>
-                <div className="text-xs">Capacity: {shelter.capacity} evacuees</div>
-                <div className="text-xs text-slate-600">Occupancy: {shelter.current_occupancy}</div>
+              <div className="p-1 text-forest-950">
+                <div className="font-bold text-xs text-forest-800">{shelter.name}</div>
+                <div className="text-xs text-sage-700">Capacity: {shelter.capacity} evacuees</div>
+                <div className="text-xs text-sage-600">Occupancy: {shelter.current_occupancy}</div>
               </div>
             </Popup>
           </Marker>
@@ -316,11 +316,11 @@ export const EmergencyMap: React.FC<Props> = ({
                 }}
               >
                 <Popup>
-                  <div className="p-1 text-slate-900">
+                  <div className="p-1 text-forest-950">
                     <div className="font-bold text-xs text-red-700">{rz.zone_name}</div>
                     <div className="text-xs font-mono">Risk Level: {rz.risk_level} ({rz.hazard_type})</div>
-                    <div className="text-xs text-slate-600 mt-1">{rz.description}</div>
-                    <div className="text-[11px] text-slate-500 mt-1">Exposed Population: ~{rz.population_estimate}</div>
+                    <div className="text-xs text-sage-700 mt-1">{rz.description}</div>
+                    <div className="text-[11px] text-sage-600 mt-1">Exposed Population: ~{rz.population_estimate}</div>
                   </div>
                 </Popup>
               </Polygon>

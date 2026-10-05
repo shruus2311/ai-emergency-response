@@ -271,7 +271,7 @@ export const ReportEmergencyPage: React.FC = () => {
             </div>
 
             <div className="text-sage-700 dark:text-sage-400 pt-2 border-t border-ivory-300 dark:border-forest-800">
-              Clustering Correlation: <strong className="text-forest-950 dark:text-slate-200">{aiResult.clustering_decision}</strong>. 
+              Clustering Correlation: <strong className="text-forest-950 dark:text-ivory-50">{aiResult.clustering_decision}</strong>. 
               Pipeline processed in {aiResult.orchestration_summary?.pipeline_time_ms} ms.
             </div>
           </div>

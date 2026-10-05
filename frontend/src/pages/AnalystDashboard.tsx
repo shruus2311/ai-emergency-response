@@ -65,7 +65,7 @@ export const AnalystDashboard: React.FC = () => {
           Aggregating telemetry from database records...
         </div>
       ) : !analytics || !analytics.has_data ? (
-        <div className="py-16 text-center text-xs text-forest-600 dark:text-sage-400 bg-white dark:bg-forest-900/60 rounded-xl border border-ivory-300 dark:border-forest-800">
+        <div className="py-16 text-center text-xs text-forest-600 dark:text-sage-400 bg-ivory-50 dark:bg-forest-900/60 rounded-xl border border-ivory-300 dark:border-forest-800">
           No current data available in incident repository.
         </div>
       ) : (
@@ -73,7 +73,7 @@ export const AnalystDashboard: React.FC = () => {
           
           {/* Top Casualty & Population Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 p-4 rounded-xl shadow-sm">
+            <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 p-4 rounded-xl shadow-sm">
               <span className="text-[11px] font-mono text-forest-600 dark:text-sage-400 uppercase tracking-wider block">
                 Total Documented Incidents
               </span>
@@ -82,7 +82,7 @@ export const AnalystDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-forest-900/90 border border-red-200 dark:border-red-900/60 p-4 rounded-xl shadow-sm">
+            <div className="bg-ivory-50 dark:bg-forest-900/90 border border-red-200 dark:border-red-900/60 p-4 rounded-xl shadow-sm">
               <span className="text-[11px] font-mono text-red-700 dark:text-red-400 uppercase tracking-wider block">
                 Total Reported Injuries
               </span>
@@ -91,7 +91,7 @@ export const AnalystDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 p-4 rounded-xl shadow-sm">
+            <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 p-4 rounded-xl shadow-sm">
               <span className="text-[11px] font-mono text-forest-600 dark:text-sage-400 uppercase tracking-wider block">
                 Recorded Fatalities
               </span>
@@ -100,7 +100,7 @@ export const AnalystDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-forest-900/90 border border-blue-200 dark:border-blue-900/60 p-4 rounded-xl shadow-sm">
+            <div className="bg-ivory-50 dark:bg-forest-900/90 border border-blue-200 dark:border-blue-900/60 p-4 rounded-xl shadow-sm">
               <span className="text-[11px] font-mono text-blue-700 dark:text-blue-400 uppercase tracking-wider block">
                 Exposed / Displaced Persons
               </span>
@@ -114,7 +114,7 @@ export const AnalystDashboard: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* Incident Types Distribution Chart */}
-            <div className="bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4">
+            <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4">
               <h3 className="font-serif font-bold text-sm uppercase tracking-wider text-forest-950 dark:text-ivory-50 flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-forest-600 dark:text-sage-400" />
                 Incident Distribution by Hazard Classification
@@ -136,7 +136,7 @@ export const AnalystDashboard: React.FC = () => {
             </div>
 
             {/* Severity Distribution Pie Chart */}
-            <div className="bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4">
+            <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4">
               <h3 className="font-serif font-bold text-sm uppercase tracking-wider text-forest-950 dark:text-ivory-50 flex items-center gap-2">
                 <PieIcon className="w-4 h-4 text-forest-600 dark:text-sage-400" />
                 Incident Severity Classification Spread

@@ -442,9 +442,9 @@ export const translations: Translations = {
     hi: 'तत्काल हस्तक्षेप की आवश्यकता वाली कोई गंभीर घटना नहीं है।',
     mr: 'तातडीने हस्तक्षेप आवश्यक असलेली कोणतीही गंभीर घटना नाही.',
   },
-  dashNoRecentActivity: {
-    en: 'Awaiting new emergency signals or field status updates.',
-    hi: 'नए आपातकालीन संकेतों या फील्ड अपडेट की प्रतीक्षा है।',
-    mr: 'नवीन आपत्कालीन संकेत किंवा फील्ड अपडेटची प्रतीक्षा आहे.',
-  }
+  dashPrecipitationAlert: {
+    en: 'Precipitation and regional hazard feeds active. Road accessibility surveillance in effect.',
+    hi: 'वर्षा और क्षेत्रीय आपदा डेटा सक्रिय। सड़क सुलभता निगरानी प्रभावी है।',
+    mr: 'पाऊस आणि प्रादेशिक आपत्ती डेटा सक्रिय. रस्ता प्रवेशयोग्यता देखरेख सुरू आहे.',
+  },
 };

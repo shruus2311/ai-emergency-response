@@ -64,7 +64,7 @@ export const SOSPage: React.FC = () => {
       )}
 
       {sosStatus === 'SENT' && sosResult ? (
-        <div className="bg-white dark:bg-forest-900 border border-red-300 dark:border-red-600/60 rounded-2xl p-6 sm:p-8 shadow-md text-left space-y-6">
+        <div className="bg-ivory-50 dark:bg-forest-900 border border-red-300 dark:border-red-600/60 rounded-2xl p-6 sm:p-8 shadow-md text-left space-y-6">
           <div className="flex items-center gap-3 text-red-700 dark:text-red-400">
             <Radio className="w-8 h-8 animate-pulse text-red-600 dark:text-red-500" />
             <div>
@@ -151,7 +151,7 @@ export const SOSPage: React.FC = () => {
               placeholder="Brief emergency note (e.g. 2 trapped in vehicle, rising water)"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-white dark:bg-forest-900 border border-ivory-300 dark:border-forest-700 rounded-xl px-4 py-2.5 text-xs text-forest-950 dark:text-white placeholder-forest-400 dark:placeholder-sage-600 focus:outline-none focus:ring-1 focus:ring-red-500"
+              className="w-full bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-700 rounded-xl px-4 py-2.5 text-xs text-forest-950 dark:text-white placeholder-forest-400 dark:placeholder-sage-600 focus:outline-none focus:ring-1 focus:ring-red-500"
             />
           </div>
 

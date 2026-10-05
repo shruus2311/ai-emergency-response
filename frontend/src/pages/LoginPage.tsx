@@ -47,7 +47,7 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-4 bg-ivory-50 dark:bg-forest-950 text-forest-900 dark:text-sage-100">
-      <div className="max-w-md w-full bg-white dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 rounded-2xl shadow-sm p-6 sm:p-8">
+      <div className="max-w-md w-full bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 rounded-2xl shadow-sm p-6 sm:p-8">
         
         {/* Header */}
         <div className="text-center mb-6">
@@ -78,7 +78,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="button"
               onClick={() => handleDemoLogin('DISPATCHER')}
-              className="py-1.5 px-2 bg-white dark:bg-forest-900 hover:bg-ivory-200 dark:hover:bg-forest-800 border border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-200 text-xs rounded font-mono font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+              className="py-1.5 px-2 bg-ivory-50 dark:bg-forest-900 hover:bg-ivory-200 dark:hover:bg-forest-800 border border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-200 text-xs rounded font-mono font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
             >
               <Radio className="w-3.5 h-3.5 text-forest-700 dark:text-sage-300" />
               Dispatcher
@@ -86,7 +86,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="button"
               onClick={() => handleDemoLogin('RESPONDER')}
-              className="py-1.5 px-2 bg-white dark:bg-forest-900 hover:bg-ivory-200 dark:hover:bg-forest-800 border border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-200 text-xs rounded font-mono font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+              className="py-1.5 px-2 bg-ivory-50 dark:bg-forest-900 hover:bg-ivory-200 dark:hover:bg-forest-800 border border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-200 text-xs rounded font-mono font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
             >
               <UserCheck className="w-3.5 h-3.5 text-forest-700 dark:text-sage-300" />
               Responder
@@ -94,14 +94,14 @@ export const LoginPage: React.FC = () => {
             <button
               type="button"
               onClick={() => handleDemoLogin('ANALYST')}
-              className="py-1.5 px-2 bg-white dark:bg-forest-900 hover:bg-ivory-200 dark:hover:bg-forest-800 border border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-200 text-xs rounded font-mono font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+              className="py-1.5 px-2 bg-ivory-50 dark:bg-forest-900 hover:bg-ivory-200 dark:hover:bg-forest-800 border border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-200 text-xs rounded font-mono font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
             >
               Analyst
             </button>
             <button
               type="button"
               onClick={() => handleDemoLogin('ADMIN')}
-              className="py-1.5 px-2 bg-white dark:bg-forest-900 hover:bg-ivory-200 dark:hover:bg-forest-800 border border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-200 text-xs rounded font-mono font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+              className="py-1.5 px-2 bg-ivory-50 dark:bg-forest-900 hover:bg-ivory-200 dark:hover:bg-forest-800 border border-ivory-300 dark:border-forest-700 text-forest-900 dark:text-sage-200 text-xs rounded font-mono font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
             >
               Admin
             </button>

@@ -120,7 +120,7 @@ export const SystemHealthPage: React.FC = () => {
                     {Object.entries(svc.details).map(([k, v]: [string, any]) => (
                       <div key={k} className="flex justify-between">
                         <span className="text-sage-600 dark:text-sage-500">{k}:</span>
-                        <span className="text-forest-950 dark:text-slate-200 truncate max-w-[200px]">{String(v)}</span>
+                        <span className="text-forest-950 dark:text-ivory-50 truncate max-w-[200px]">{String(v)}</span>
                       </div>
                     ))}
                   </div>

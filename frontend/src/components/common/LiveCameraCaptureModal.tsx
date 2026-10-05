@@ -123,7 +123,7 @@ export const LiveCameraCaptureModal: React.FC<Props> = ({ isOpen, onClose, onCap
           <button
             type="button"
             onClick={toggleFacingMode}
-            className="p-2.5 bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700 rounded-full transition-colors flex items-center gap-1 text-xs"
+            className="p-2.5 bg-forest-900/80 hover:bg-forest-800 text-ivory-100 border border-forest-700 rounded-full transition-colors flex items-center gap-1 text-xs"
             title="Switch Camera (Front / Rear)"
           >
             <SwitchCamera className="w-4 h-4" />
@@ -136,7 +136,7 @@ export const LiveCameraCaptureModal: React.FC<Props> = ({ isOpen, onClose, onCap
               stopCamera();
               onClose();
             }}
-            className="p-2.5 bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700 rounded-full transition-colors"
+            className="p-2.5 bg-forest-900/80 hover:bg-forest-800 text-ivory-100 border border-forest-700 rounded-full transition-colors"
             title="Close Camera"
           >
             <X className="w-5 h-5" />
@@ -145,10 +145,10 @@ export const LiveCameraCaptureModal: React.FC<Props> = ({ isOpen, onClose, onCap
       </div>
 
       {/* Main Camera Viewfinder View */}
-      <div className="relative w-full max-w-lg flex-1 my-4 flex items-center justify-center rounded-3xl overflow-hidden bg-slate-950 border-2 border-slate-800 shadow-2xl">
+      <div className="relative w-full max-w-lg flex-1 my-4 flex items-center justify-center rounded-3xl overflow-hidden bg-forest-950 border-2 border-forest-800 shadow-2xl">
         
         {cameraLoading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-slate-400 z-10 bg-slate-950">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-sage-400 z-10 bg-forest-950">
             <RefreshCw className="w-8 h-8 animate-spin text-red-500" />
             <span className="text-xs font-mono font-bold">Activating device camera...</span>
           </div>
@@ -158,7 +158,7 @@ export const LiveCameraCaptureModal: React.FC<Props> = ({ isOpen, onClose, onCap
           <div className="p-6 text-center space-y-3 z-10 max-w-xs">
             <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto" />
             <div className="text-sm font-bold text-white">Camera Access Error</div>
-            <p className="text-xs text-slate-400 leading-relaxed">{error}</p>
+            <p className="text-xs text-sage-400 leading-relaxed">{error}</p>
             <button
               type="button"
               onClick={startCamera}
@@ -215,7 +215,7 @@ export const LiveCameraCaptureModal: React.FC<Props> = ({ isOpen, onClose, onCap
             <Camera className="w-7 h-7" />
           </div>
         </button>
-        <span className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
+        <span className="text-xs font-mono font-bold text-sage-300 uppercase tracking-wider">
           Snap Live Photo
         </span>
       </div>

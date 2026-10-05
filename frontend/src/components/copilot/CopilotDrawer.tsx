@@ -86,7 +86,7 @@ export const CopilotDrawer: React.FC<Props> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full sm:w-96 bg-white dark:bg-forest-900 border-l border-ivory-300 dark:border-forest-800 shadow-2xl z-50 flex flex-col font-sans">
+    <div className="fixed inset-y-0 right-0 w-full sm:w-96 bg-ivory-50 dark:bg-forest-900 border-l border-ivory-300 dark:border-forest-800 shadow-2xl z-50 flex flex-col font-sans">
       {/* Header */}
       <div className="px-4 py-3 border-b border-ivory-200 dark:border-forest-800 flex items-center justify-between bg-ivory-100 dark:bg-forest-950">
         <div className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export const CopilotDrawer: React.FC<Props> = ({
           <button
             key={sq}
             onClick={() => handleSend(sq)}
-            className="text-[11px] px-2 py-1 bg-white hover:bg-ivory-200 dark:bg-forest-800/80 dark:hover:bg-forest-700 text-forest-800 dark:text-sage-200 rounded border border-ivory-300 dark:border-forest-700 transition-colors text-left"
+            className="text-[11px] px-2 py-1 bg-ivory-50 hover:bg-ivory-200 dark:bg-forest-800/80 dark:hover:bg-forest-700 text-forest-800 dark:text-sage-200 rounded border border-ivory-300 dark:border-forest-700 transition-colors text-left"
           >
             {sq}
           </button>
@@ -169,7 +169,7 @@ export const CopilotDrawer: React.FC<Props> = ({
             onChange={(e) => setInputQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask AI Copilot about this incident..."
-            className="flex-1 bg-white dark:bg-forest-900 border border-ivory-300 dark:border-forest-700 rounded-lg px-3 py-2 text-xs text-forest-950 dark:text-white placeholder-forest-400 dark:placeholder-sage-600 focus:outline-none focus:ring-1 focus:ring-forest-600"
+            className="flex-1 bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-700 rounded-lg px-3 py-2 text-xs text-forest-950 dark:text-white placeholder-forest-400 dark:placeholder-sage-600 focus:outline-none focus:ring-1 focus:ring-forest-600"
           />
           <button
             onClick={() => handleSend()}

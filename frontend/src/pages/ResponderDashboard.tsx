@@ -219,14 +219,14 @@ export const ResponderDashboard: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="p-3 bg-ivory-50 dark:bg-forest-950 rounded border border-ivory-300 dark:border-forest-800 space-y-1">
                 <span className="font-bold text-sage-700 dark:text-sage-400 block font-mono text-[10px]">INCIDENT SITUATION:</span>
-                <p className="text-forest-900 dark:text-slate-300 leading-relaxed font-sans">{assignment.description}</p>
+                <p className="text-forest-900 dark:text-sage-300 leading-relaxed font-sans">{assignment.description}</p>
               </div>
 
               <div className="p-3 bg-ivory-50 dark:bg-forest-950 rounded border border-ivory-300 dark:border-forest-800 space-y-1 font-mono text-[11px]">
                 <span className="font-bold text-sage-700 dark:text-sage-400 block font-mono text-[10px]">TACTICAL PARAMETERS:</span>
-                <div className="text-forest-900 dark:text-slate-300">Hazard Type: <strong className="text-forest-950 dark:text-white">{assignment.incident_type}</strong></div>
-                <div className="text-forest-900 dark:text-slate-300">People Affected: <strong className="text-forest-950 dark:text-white">{assignment.affected_people_estimate || 'Unknown'}</strong></div>
-                <div className="text-forest-900 dark:text-slate-300">Injuries Reported: <strong className="text-red-700 dark:text-red-400">{assignment.injuries_count || 0}</strong></div>
+                <div className="text-forest-900 dark:text-sage-300">Hazard Type: <strong className="text-forest-950 dark:text-white">{assignment.incident_type}</strong></div>
+                <div className="text-forest-900 dark:text-sage-300">People Affected: <strong className="text-forest-950 dark:text-white">{assignment.affected_people_estimate || 'Unknown'}</strong></div>
+                <div className="text-forest-900 dark:text-sage-300">Injuries Reported: <strong className="text-red-700 dark:text-red-400">{assignment.injuries_count || 0}</strong></div>
                 {assignment.hazards_description && (
                   <div className="text-amber-800 dark:text-amber-300">Secondary Hazards: {assignment.hazards_description}</div>
                 )}

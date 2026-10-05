@@ -309,7 +309,7 @@ export const LandingPage: React.FC = () => {
               {priorityIncidents.map((inc) => (
                 <div
                   key={inc.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border border-ivory-300 dark:border-forest-800 bg-white dark:bg-forest-950/60 hover:bg-ivory-100 dark:hover:bg-forest-950 transition-all gap-3"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border border-ivory-300 dark:border-forest-800 bg-ivory-50 dark:bg-forest-950/60 hover:bg-ivory-100 dark:hover:bg-forest-950 transition-all gap-3"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -430,7 +430,7 @@ export const LandingPage: React.FC = () => {
           </div>
 
           <p className="text-xs text-forest-900 dark:text-sage-200 my-3 font-medium leading-relaxed font-sans">
-            Precipitation and regional hazard feeds active. Road accessibility surveillance in effect.
+            {t('dashPrecipitationAlert', 'Precipitation and regional hazard feeds active. Road accessibility surveillance in effect.')}
           </p>
 
           <div>

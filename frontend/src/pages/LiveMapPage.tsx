@@ -57,7 +57,7 @@ export const LiveMapPage: React.FC = () => {
     <div className="h-[calc(100vh-64px)] flex flex-col font-sans relative bg-ivory-50 dark:bg-forest-950 text-forest-900 dark:text-sage-100">
       
       {/* Top Control Bar */}
-      <div className="p-3 bg-white/95 dark:bg-forest-900/95 backdrop-blur border-b border-ivory-300 dark:border-forest-800 z-10 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+      <div className="p-3 bg-ivory-50/95 dark:bg-forest-900/95 backdrop-blur border-b border-ivory-300 dark:border-forest-800 z-10 flex flex-wrap items-center justify-between gap-3 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 font-mono text-xs font-bold text-forest-950 dark:text-white uppercase tracking-wider">
             <div className="p-1.5 rounded bg-forest-50 dark:bg-forest-800 text-forest-700 dark:text-sage-300">

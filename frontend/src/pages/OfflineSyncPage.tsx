@@ -77,7 +77,7 @@ export const OfflineSyncPage: React.FC = () => {
       )}
 
       {/* Queue items */}
-      <div className="bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl overflow-hidden shadow-sm p-5 space-y-4">
+      <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl overflow-hidden shadow-sm p-5 space-y-4">
         <h2 className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider">
           Cached IndexedDB Operations ({items.length})
         </h2>

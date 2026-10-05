@@ -97,7 +97,7 @@ export const NotificationsPage: React.FC = () => {
 
           <div className="space-y-3">
             {notifications.length === 0 ? (
-              <div className="bg-white dark:bg-forest-900/60 border border-ivory-300 dark:border-forest-800 rounded-xl p-8 text-center text-xs text-forest-600 dark:text-sage-400">
+              <div className="bg-ivory-50 dark:bg-forest-900/60 border border-ivory-300 dark:border-forest-800 rounded-xl p-8 text-center text-xs text-forest-600 dark:text-sage-400">
                 No active broadcast notifications recorded.
               </div>
             ) : (
@@ -107,7 +107,7 @@ export const NotificationsPage: React.FC = () => {
                   className={`p-4 rounded-xl border transition-all ${
                     n.is_read
                       ? 'bg-ivory-100/60 dark:bg-forest-900/40 border-ivory-200 dark:border-forest-800 text-forest-700 dark:text-sage-400'
-                      : 'bg-white dark:bg-forest-900 border-forest-300 dark:border-forest-700 text-forest-950 dark:text-ivory-50 shadow-sm'
+                      : 'bg-ivory-50 dark:bg-forest-900 border-forest-300 dark:border-forest-700 text-forest-950 dark:text-ivory-50 shadow-sm'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -147,7 +147,7 @@ export const NotificationsPage: React.FC = () => {
 
         {/* Right Column (1 Col): Broadcast Geofenced Alert */}
         <div className="space-y-4">
-          <div className="bg-white dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4">
+          <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4">
             <div className="border-b border-ivory-200 dark:border-forest-800 pb-2">
               <span className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider flex items-center gap-1.5">
                 <Radio className="w-4 h-4 text-forest-700 dark:text-sage-300" />

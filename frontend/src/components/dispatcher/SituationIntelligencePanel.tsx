@@ -95,7 +95,7 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
   };
 
   return (
-    <div className="bg-white dark:bg-forest-900/95 border border-ivory-300 dark:border-forest-800 rounded-2xl p-5 space-y-5 shadow-sm font-sans">
+    <div className="bg-ivory-50 dark:bg-forest-900/95 border border-ivory-300 dark:border-forest-800 rounded-2xl p-5 space-y-5 shadow-sm font-sans">
       
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-ivory-200 dark:border-forest-800 pb-4">
@@ -167,7 +167,7 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
             </span>
           </div>
 
-          <div className="text-xs text-forest-900 dark:text-sage-200 leading-relaxed font-sans bg-white dark:bg-forest-900/60 p-3.5 rounded-lg border border-ivory-200 dark:border-forest-800">
+          <div className="text-xs text-forest-900 dark:text-sage-200 leading-relaxed font-sans bg-ivory-50 dark:bg-forest-900/60 p-3.5 rounded-lg border border-ivory-200 dark:border-forest-800">
             {loading ? (
               <span className="text-forest-500 dark:text-sage-500">Synthesizing external weather and seismic signals...</span>
             ) : (
@@ -269,7 +269,7 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
           </span>
         </div>
 
-        <div className="bg-white dark:bg-forest-950 border border-ivory-200 dark:border-forest-800 rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-ivory-50 dark:bg-forest-950 border border-ivory-200 dark:border-forest-800 rounded-xl overflow-hidden shadow-sm">
           {signals.length === 0 ? (
             <div className="p-6 text-center text-xs text-forest-500 dark:text-sage-500">
               {loading ? 'Fetching external signal streams...' : 'No external warning signals currently within monitored perimeter.'}
