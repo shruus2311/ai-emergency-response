@@ -1,6 +1,6 @@
 import { enqueueOfflineOperation } from './offlineQueue';
 
-const API_BASE = '/api';
+const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api';
 
 export function getAuthToken(): string | null {
   return localStorage.getItem('resqintel_token');
