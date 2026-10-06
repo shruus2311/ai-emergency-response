@@ -116,6 +116,8 @@ export const api = {
       request<any>(`/ai/situation-intelligence?latitude=${lat}&longitude=${lng}${radius ? `&radius_km=${radius}` : ''}`),
     externalSignals: (limit?: number) => request<any[]>(`/ai/external-signals?limit=${limit || 50}`),
     proactiveDetect: (lat: number, lng: number) => request<any>(`/ai/proactive-detect?latitude=${lat}&longitude=${lng}`, { method: 'POST' }),
+    ingestExternalNews: (lat?: number, lng?: number, maxItems?: number) =>
+      request<any>(`/ai/external-news/ingest-to-incidents?latitude=${lat || 18.5204}&longitude=${lng || 73.8567}&max_items=${maxItems || 15}`, { method: 'POST' }),
   },
 
   resources: {

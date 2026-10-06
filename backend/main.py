@@ -4,10 +4,14 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+import asyncio
+import logging
+
 from backend.core.config import settings
 from backend.core.database import init_db
 from backend.core.seed import seed_database
 from backend.core.websocket_manager import ws_manager
+from backend.services.external_feed_ingestor import ExternalFeedIngestor
 
 from backend.api.routes.auth import router as auth_router
 from backend.api.routes.incidents import router as incidents_router
@@ -22,12 +26,30 @@ from backend.api.routes.datasets import router as datasets_router
 from backend.api.routes.admin import router as admin_router
 from backend.api.routes.health import router as health_router
 
+logger = logging.getLogger("resqintel")
+
+async def continuous_external_feed_ingestion_loop():
+    """Continuous background task periodically ingesting and scoring external Indian news feeds into the active incident queue"""
+    await asyncio.sleep(5)
+    while True:
+        try:
+            await ExternalFeedIngestor.ingest_external_news_reports()
+        except Exception as e:
+            logger.error(f"[ContinuousIngestion] Error during continuous external feed processing: {e}")
+        await asyncio.sleep(60)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Initialize DB tables & seed demo data
     await init_db()
     await seed_database()
-    yield
+
+    # Start autonomous continuous external feed ingestion background task
+    bg_task = asyncio.create_task(continuous_external_feed_ingestion_loop())
+    try:
+        yield
+    finally:
+        bg_task.cancel()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

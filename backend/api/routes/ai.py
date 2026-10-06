@@ -17,6 +17,7 @@ from backend.agents.orchestrator import AgentOrchestrator
 from backend.agents.copilot_agent import CopilotAgent
 from backend.agents.sitrep_agent import SitrepAgent
 from backend.agents.situation_intelligence_agent import SituationIntelligenceAgent
+from backend.services.external_feed_ingestor import ExternalFeedIngestor
 from backend.core.websocket_manager import ws_manager
 
 router = APIRouter(prefix="/ai", tags=["AI Intelligence, Copilot & SITREP"])
@@ -338,6 +339,21 @@ async def list_external_signals(
     res = await db.execute(q)
     return res.scalars().all()
 
+@router.post("/external-news/ingest-to-incidents")
+async def trigger_external_news_ingestion(
+    latitude: float = 18.5204,
+    longitude: float = 73.8567,
+    max_items: int = 15,
+    db: AsyncSession = Depends(get_db)
+):
+    """Processes verified Indian disaster news feeds, calculates multi-factor severity, and ingests them into the active incident queue."""
+    result = await ExternalFeedIngestor.ingest_external_news_reports(
+        center_lat=latitude,
+        center_lng=longitude,
+        max_items=max_items
+    )
+    return result
+
 @router.post("/proactive-detect")
 async def trigger_proactive_detection(
     latitude: float = 18.5204,
@@ -346,7 +362,14 @@ async def trigger_proactive_detection(
     user: User = Depends(require_roles(["ADMIN", "DISPATCHER"])),
     db: AsyncSession = Depends(get_db)
 ):
-    """Section 21: Proactive Incident Detection - Spawns potential incidents from high-severity fused signals"""
+    """Section 21: Proactive Incident Detection - Ingests external Indian news feeds and spawns potential incidents from high-severity fused signals"""
+    # 1. Ingest latest Indian emergency news reports into active incidents
+    feed_ingest_res = await ExternalFeedIngestor.ingest_external_news_reports(
+        center_lat=latitude,
+        center_lng=longitude,
+        max_items=15
+    )
+
     inc_query = await db.execute(select(Incident).where(Incident.is_active == True))
     all_incidents = [
         {"id": inc.id, "title": inc.title, "incident_type": inc.incident_type, "latitude": inc.latitude, "longitude": inc.longitude}
@@ -418,6 +441,7 @@ async def trigger_proactive_detection(
     return {
         "status": "SUCCESS",
         "created_potential_incidents": len(created_potentials),
+        "feed_ingestion": feed_ingest_res,
         "threat_level": analysis.get("threat_level"),
         "analysis": analysis
     }

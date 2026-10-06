@@ -71,10 +71,17 @@ export const DispatcherDashboard: React.FC<Props> = ({ onOpenCopilot }) => {
         event.event === 'ASSIGNMENT_STATUS_CHANGED' ||
         event.event === 'RESPONDER_LOCATION_UPDATE' ||
         event.event === 'SOS_ALERT' ||
-        event.event === 'NEW_NOTIFICATION'
+        event.event === 'NEW_NOTIFICATION' ||
+        event.type === 'NEW_INCIDENT' ||
+        event.type === 'EXTERNAL_FEEDS_INGESTED' ||
+        event.event === 'PROACTIVE_INCIDENT_DETECTED'
       ) {
-        if (event.event === 'NEW_REPORT_INGESTED') {
-          setLiveAlert(`🚨 ${t('newDistressAlert', 'NEW DISTRESS SIGNAL')}: #${event.incident_number} - ${event.incident_type} (${event.severity_class || 'URGENT'})`);
+        if (event.event === 'NEW_REPORT_INGESTED' || event.type === 'NEW_INCIDENT') {
+          const incNum = event.data?.incident_number || event.incident_number || 'ALERT';
+          const incTitle = event.data?.title || event.title || event.incident_type || 'Disaster Signal';
+          setLiveAlert(`🚨 NEW EMERGENCY SIGNAL INGESTED: #${incNum} — ${incTitle}`);
+        } else if (event.type === 'EXTERNAL_FEEDS_INGESTED') {
+          setLiveAlert(`📡 FEED INGESTION ENGINE: ${event.data?.created_count || 0} external Indian news emergency reports processed and injected into Active Queue.`);
         } else if (event.event === 'SOS_ALERT') {
           setLiveAlert(`🚨 SOS ACTIVATION: #${event.incident_number}`);
         }

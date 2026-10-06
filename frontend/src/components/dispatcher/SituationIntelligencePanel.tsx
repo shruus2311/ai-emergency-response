@@ -39,13 +39,14 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
   // Sector coordinates for scanning
   const [centerLat, setCenterLat] = useState<number>(18.5204);
   const [centerLng, setCenterLng] = useState<number>(73.8567);
+  const [ingesting, setIngesting] = useState<boolean>(false);
 
   const fetchSituationData = async () => {
     setLoading(true);
     try {
       const [sitrep, sigs] = await Promise.all([
         api.ai.situationIntelligence(centerLat, centerLng),
-        api.ai.externalSignals(25)
+        api.ai.externalSignals(35)
       ]);
       setData(sitrep);
       setSignals(sigs);
@@ -53,6 +54,27 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
       console.error('Failed to fetch situation intelligence feeds:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSyncAndIngestFeeds = async () => {
+    setIngesting(true);
+    setScanResult(null);
+    try {
+      const ingestRes = await api.ai.ingestExternalNews(centerLat, centerLng);
+      if (ingestRes && ingestRes.ingested_count > 0) {
+        setScanResult(`⚡ INGESTION COMPLETED: Injected ${ingestRes.ingested_count} Indian emergency news report(s) into Active Incident Queue.`);
+      } else if (ingestRes && ingestRes.fused_count > 0) {
+        setScanResult(`📡 FUSION COMPLETED: Fused ${ingestRes.fused_count} corroborating Indian news bulletin(s) with active incidents.`);
+      } else {
+        setScanResult('📡 Live Feeds Synced: All external Indian emergency signals are currently up to date in the Active Incident Queue.');
+      }
+      await fetchSituationData();
+      if (onIncidentCreated) onIncidentCreated();
+    } catch (err: any) {
+      setScanResult(`Sync error: ${err.message || 'Failed to sync external feeds'}`);
+    } finally {
+      setIngesting(false);
     }
   };
 
@@ -65,13 +87,14 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
     setScanResult(null);
     try {
       const res = await api.ai.proactiveDetect(centerLat, centerLng);
-      if (res.proactive_incident_created && res.incident) {
-        setScanResult(`⚡ PROACTIVE THREAT DETECTED: Created Incident #${res.incident.incident_number} (${res.incident.title})`);
-        if (onIncidentCreated) onIncidentCreated();
+      const feedCount = res.feed_ingestion?.ingested_count || 0;
+      if (feedCount > 0 || res.created_potential_incidents > 0) {
+        setScanResult(`⚡ PROACTIVE THREAT DETECTED: Created ${res.created_potential_incidents} potential incident(s) and injected ${feedCount} Indian emergency news incident(s) into Active Queue.`);
       } else {
-        setScanResult(res.message || 'Scan completed: No anomalous external threshold violations detected in current radius.');
+        setScanResult(res.message || 'Scan completed: All external Indian feeds analyzed and prioritized in active queue.');
       }
       await fetchSituationData();
+      if (onIncidentCreated) onIncidentCreated();
     } catch (err: any) {
       setScanResult(`Scan error: ${err.message || 'Operation failed'}`);
     } finally {
@@ -122,12 +145,13 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => fetchSituationData()}
-            disabled={loading}
+            onClick={handleSyncAndIngestFeeds}
+            disabled={loading || ingesting}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-ivory-100 hover:bg-ivory-200 dark:bg-forest-800 dark:hover:bg-forest-700 border border-ivory-300 dark:border-forest-700 rounded-lg text-xs font-semibold text-forest-900 dark:text-sage-200 transition-colors disabled:opacity-50"
+            title="Fetch and inject latest Indian disaster feeds into Active Incident Queue"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-            <span>Sync Feeds</span>
+            <RefreshCw className={`w-3.5 h-3.5 ${ingesting || loading ? 'animate-spin' : ''}`} />
+            <span>{ingesting ? 'Ingesting Feeds...' : 'Sync & Ingest Feeds'}</span>
           </button>
 
           <button
@@ -313,7 +337,15 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
                           ? `${(sig.confidence * 100).toFixed(0)}%`
                           : '92%'}
                       </span>
-                      <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase">{sig.processing_status || 'PROCESSED'}</span>
+                      <span className={`px-2 py-0.5 rounded font-mono font-bold uppercase text-[9px] ${
+                        sig.processing_status === 'CONVERTED_TO_INCIDENT' || sig.correlated_incident_id
+                          ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800'
+                          : 'text-forest-700 dark:text-sage-400'
+                      }`}>
+                        {sig.processing_status === 'CONVERTED_TO_INCIDENT' || sig.correlated_incident_id
+                          ? '✓ In Active Incident Queue'
+                          : sig.processing_status || 'PROCESSED'}
+                      </span>
                     </div>
                   </div>
 
