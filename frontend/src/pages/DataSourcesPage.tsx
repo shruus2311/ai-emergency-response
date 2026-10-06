@@ -36,7 +36,7 @@ export const DataSourcesPage: React.FC = () => {
         <span className="text-[11px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-forest-100 text-forest-900 dark:bg-forest-900 dark:text-sage-300 border border-forest-300 dark:border-forest-700">
           PUBLIC DATASETS & VERIFIED AI MODEL REGISTRY
         </span>
-        <h1 className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-2 tracking-tight font-serif">
+        <h1 className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-2 tracking-tight ">
           {t('navDataSources', 'Data Governance & Machine Learning Registry')}
         </h1>
         <p className="text-sm text-sage-800 dark:text-sage-400 mt-1">
@@ -51,7 +51,7 @@ export const DataSourcesPage: React.FC = () => {
             <div className="p-2 rounded-xl bg-forest-100 dark:bg-forest-850 border border-forest-300 dark:border-forest-700 text-forest-800 dark:text-sage-300">
               <Cpu className="w-4 h-4" />
             </div>
-            <h2 className="font-bold text-base text-forest-950 dark:text-ivory-50 uppercase tracking-wide font-serif">
+            <h2 className="font-bold text-base text-forest-950 dark:text-ivory-50 uppercase tracking-wide ">
               Evaluated Model Registry ({models.length} Models)
             </h2>
           </div>
@@ -105,7 +105,7 @@ export const DataSourcesPage: React.FC = () => {
           <div className="p-2 rounded-xl bg-forest-100 dark:bg-forest-850 border border-forest-300 dark:border-forest-700 text-forest-800 dark:text-sage-300">
             <Database className="w-4 h-4" />
           </div>
-          <h2 className="font-bold text-base text-forest-950 dark:text-ivory-50 uppercase tracking-wide font-serif">
+          <h2 className="font-bold text-base text-forest-950 dark:text-ivory-50 uppercase tracking-wide ">
             Ingested Open Emergency Datasets ({datasets.length} Catalogs)
           </h2>
         </div>

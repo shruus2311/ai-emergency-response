@@ -196,7 +196,7 @@ export const IncidentDetailPage: React.FC = () => {
                 </span>
               )}
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white font-serif">
+            <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white ">
               {incident.title}
             </h1>
             <div className="flex items-center gap-2 text-xs text-sage-700 dark:text-sage-400 mt-1">

@@ -94,7 +94,7 @@ export const CopilotDrawer: React.FC<Props> = ({
             <Bot className="w-4 h-4" />
           </div>
           <div>
-            <div className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50 flex items-center gap-1.5">
+            <div className="font-bold text-sm text-forest-950 dark:text-ivory-50 flex items-center gap-1.5">
               <span>{t('navCopilot', 'AI Copilot')}</span>
               <span className="text-[10px] bg-forest-200 text-forest-900 dark:bg-forest-800 dark:text-sage-200 px-1.5 py-0.2 rounded font-mono font-bold">
                 Grounded

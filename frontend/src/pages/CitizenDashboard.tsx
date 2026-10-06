@@ -40,7 +40,7 @@ export const CitizenDashboard: React.FC = () => {
           <span className="text-xs font-mono font-bold text-forest-700 dark:text-sage-400 uppercase tracking-widest">
             {t('navCitizenPortal', 'Civilian Emergency Portal')}
           </span>
-          <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white font-serif mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white mt-1">
             {t('appTitle', 'ResQIntel')} — {t('appTagline', 'Emergency Response Intelligence')}
           </h1>
           <p className="text-xs sm:text-sm text-sage-800 dark:text-sage-400 mt-2 max-w-xl font-sans">
@@ -77,7 +77,7 @@ export const CitizenDashboard: React.FC = () => {
             <div className="w-10 h-10 rounded bg-ivory-200 dark:bg-forest-850 border border-ivory-300 dark:border-forest-700 text-forest-800 dark:text-sage-300 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
               <ShieldAlert className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-base text-forest-950 dark:text-white font-serif">{t('fileReportTitle', 'File Multimodal Report')}</h3>
+            <h3 className="font-bold text-base text-forest-950 dark:text-white ">{t('fileReportTitle', 'File Multimodal Report')}</h3>
             <p className="text-xs text-sage-800 dark:text-sage-400 mt-1 font-sans">
               {t('fileReportDesc', 'Submit description, live GPS location, voice audio recording, and photographic evidence for multi-agent AI verification.')}
             </p>
@@ -96,7 +96,7 @@ export const CitizenDashboard: React.FC = () => {
             <div className="w-10 h-10 rounded bg-amber-100 dark:bg-forest-850 border border-amber-300 dark:border-amber-700/60 text-amber-800 dark:text-amber-400 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
               <AlertOctagon className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-base text-forest-950 dark:text-white font-serif">{t('offlineDisasterTitle', 'Offline Flood & Disaster Mode')}</h3>
+            <h3 className="font-bold text-base text-forest-950 dark:text-white ">{t('offlineDisasterTitle', 'Offline Flood & Disaster Mode')}</h3>
             <p className="text-xs text-sage-800 dark:text-sage-400 mt-1 font-sans">
               {t('offlineDisasterDesc', 'Designed for low battery, zero connectivity, and wet screen distress situations with tap-based panic reporting.')}
             </p>

@@ -79,7 +79,7 @@ export const NotificationsPage: React.FC = () => {
         <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-forest-100 text-forest-800 dark:bg-forest-900 dark:text-sage-300 border border-forest-200 dark:border-forest-700">
           Public Safety Alerts & Geofenced Warnings
         </span>
-        <h1 className="text-2xl sm:text-3xl font-serif font-bold text-forest-950 dark:text-ivory-50 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-1">
           {t('navNotifications', 'Notification Center & Crisis Broadcasting')}
         </h1>
       </div>
@@ -89,7 +89,7 @@ export const NotificationsPage: React.FC = () => {
         {/* Left Column (2 Cols): Live Notifications Feed */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider flex items-center gap-2">
+            <h2 className="font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider flex items-center gap-2">
               <Bell className="w-4 h-4 text-forest-700 dark:text-sage-300" />
               Operational Alert Feed ({notifications.length})
             </h2>
@@ -120,7 +120,7 @@ export const NotificationsPage: React.FC = () => {
                         }`}>
                           {n.severity}
                         </span>
-                        <span className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50">{n.title}</span>
+                        <span className="font-bold text-sm text-forest-950 dark:text-ivory-50">{n.title}</span>
                       </div>
                       <p className="text-xs text-forest-800 dark:text-sage-200 leading-relaxed">{n.message}</p>
                       <div className="text-[10px] text-forest-600 dark:text-sage-400 font-mono flex items-center gap-2 pt-1">
@@ -149,7 +149,7 @@ export const NotificationsPage: React.FC = () => {
         <div className="space-y-4">
           <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4">
             <div className="border-b border-ivory-200 dark:border-forest-800 pb-2">
-              <span className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider flex items-center gap-1.5">
                 <Radio className="w-4 h-4 text-forest-700 dark:text-sage-300" />
                 Define Geofenced Warning Zone
               </span>

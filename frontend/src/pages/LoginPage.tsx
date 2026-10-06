@@ -54,7 +54,7 @@ export const LoginPage: React.FC = () => {
           <div className="w-12 h-12 rounded-xl bg-forest-800 text-ivory-50 dark:bg-forest-700 flex items-center justify-center mx-auto shadow-sm mb-3">
             <Shield className="w-6 h-6" />
           </div>
-          <h2 className="text-2xl font-serif font-bold text-forest-950 dark:text-ivory-50 tracking-wide">
+          <h2 className="text-2xl font-bold text-forest-950 dark:text-ivory-50 tracking-wide">
             Sign In to ResQIntel AI
           </h2>
           <p className="text-xs text-forest-700 dark:text-sage-400 mt-1">

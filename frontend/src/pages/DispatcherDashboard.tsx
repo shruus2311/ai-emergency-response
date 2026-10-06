@@ -180,7 +180,7 @@ export const DispatcherDashboard: React.FC<Props> = ({ onOpenCopilot }) => {
               {t('govtHeader', 'National Emergency Operations & Public Safety Command')}
             </span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-ivory-50 font-serif tracking-tight mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-ivory-50 tracking-tight mt-1">
             {t('navCommandCenter', 'Command Center')} — {t('appTagline', 'Emergency Response Intelligence Platform')}
           </h1>
         </div>
@@ -475,7 +475,7 @@ export const DispatcherDashboard: React.FC<Props> = ({ onOpenCopilot }) => {
             <div className="flex items-center justify-between border-b border-ivory-300 dark:border-forest-800 pb-3">
               <div className="flex items-center gap-2">
                 <Truck className="w-5 h-5 text-forest-700 dark:text-sage-400" />
-                <h3 className="font-bold text-forest-950 dark:text-white text-base font-serif">
+                <h3 className="font-bold text-forest-950 dark:text-white text-base ">
                   {t('assignUnitsTo', 'Assign Emergency Units to')} #{dispatchModalIncident.incident_number}
                 </h3>
               </div>

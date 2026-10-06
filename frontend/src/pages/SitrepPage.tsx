@@ -61,7 +61,7 @@ export const SitrepPage: React.FC = () => {
           <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-forest-100 text-forest-800 dark:bg-forest-900 dark:text-sage-300 border border-forest-200 dark:border-forest-700">
             Factual Operations Documentation
           </span>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-forest-950 dark:text-ivory-50 mt-1 flex items-center gap-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-1 flex items-center gap-2">
             <FileText className="w-6 h-6 text-forest-700 dark:text-sage-300" />
             Situation Report (SITREP) Generator
           </h1>
@@ -112,7 +112,7 @@ export const SitrepPage: React.FC = () => {
               <span className="text-[11px] font-mono font-bold text-red-600 dark:text-red-400 uppercase tracking-widest block">
                 OFFICIAL SITUATION REPORT (SITREP)
               </span>
-              <h2 className="text-xl sm:text-2xl font-serif font-bold text-forest-950 dark:text-ivory-50 mt-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-ivory-50 mt-1">
                 {sitrep.title}
               </h2>
               <div className="text-xs text-forest-600 dark:text-sage-400 font-mono mt-1">
@@ -128,7 +128,7 @@ export const SitrepPage: React.FC = () => {
 
           {/* Section: Operational Narrative */}
           <div className="space-y-2 text-xs">
-            <h3 className="font-serif font-bold text-forest-950 dark:text-ivory-50 uppercase tracking-wider text-xs border-b border-ivory-200 dark:border-forest-800 pb-1">
+            <h3 className="font-bold text-forest-950 dark:text-ivory-50 uppercase tracking-wider text-xs border-b border-ivory-200 dark:border-forest-800 pb-1">
               1. Executive Operational Summary
             </h3>
             <p className="text-forest-800 dark:text-sage-200 leading-relaxed font-sans text-xs">
@@ -138,7 +138,7 @@ export const SitrepPage: React.FC = () => {
 
           {/* Section: Casualties & Impact */}
           <div className="space-y-2 text-xs">
-            <h3 className="font-serif font-bold text-forest-950 dark:text-ivory-50 uppercase tracking-wider text-xs border-b border-ivory-200 dark:border-forest-800 pb-1">
+            <h3 className="font-bold text-forest-950 dark:text-ivory-50 uppercase tracking-wider text-xs border-b border-ivory-200 dark:border-forest-800 pb-1">
               2. Casualties, Demographics & Impact Extent
             </h3>
             <div className="p-3 bg-ivory-50 dark:bg-forest-950 rounded-xl border border-ivory-200 dark:border-forest-800 text-xs font-mono text-red-700 dark:text-red-300">
@@ -149,19 +149,19 @@ export const SitrepPage: React.FC = () => {
           {/* Section: Assigned Resources & Weather */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div className="p-3 bg-ivory-50 dark:bg-forest-950 rounded-xl border border-ivory-200 dark:border-forest-800 space-y-1">
-              <span className="font-serif font-bold text-forest-950 dark:text-ivory-50 block">3. Response Assets & Responders</span>
+              <span className="font-bold text-forest-950 dark:text-ivory-50 block">3. Response Assets & Responders</span>
               <p className="text-forest-800 dark:text-sage-200">{sitrep.resources_summary}</p>
             </div>
 
             <div className="p-3 bg-ivory-50 dark:bg-forest-950 rounded-xl border border-ivory-200 dark:border-forest-800 space-y-1">
-              <span className="font-serif font-bold text-forest-950 dark:text-ivory-50 block">4. Meteorological Context</span>
+              <span className="font-bold text-forest-950 dark:text-ivory-50 block">4. Meteorological Context</span>
               <p className="text-forest-800 dark:text-sage-200">{sitrep.weather_summary}</p>
             </div>
           </div>
 
           {/* Section: Outstanding Issues & Conflicts */}
           <div className="space-y-2 text-xs">
-            <h3 className="font-serif font-bold text-forest-950 dark:text-ivory-50 uppercase tracking-wider text-xs border-b border-ivory-200 dark:border-forest-800 pb-1">
+            <h3 className="font-bold text-forest-950 dark:text-ivory-50 uppercase tracking-wider text-xs border-b border-ivory-200 dark:border-forest-800 pb-1">
               5. Outstanding Operational Contradictions & Conflicts
             </h3>
             <div className="p-3 bg-ivory-50 dark:bg-forest-950 rounded-xl border border-ivory-200 dark:border-forest-800 text-forest-800 dark:text-sage-200">
@@ -171,7 +171,7 @@ export const SitrepPage: React.FC = () => {
 
           {/* Section: Missing Information Required */}
           <div className="space-y-2 text-xs">
-            <h3 className="font-serif font-bold text-forest-950 dark:text-ivory-50 uppercase tracking-wider text-xs border-b border-ivory-200 dark:border-forest-800 pb-1">
+            <h3 className="font-bold text-forest-950 dark:text-ivory-50 uppercase tracking-wider text-xs border-b border-ivory-200 dark:border-forest-800 pb-1">
               6. Critical Field Information Pending Verification
             </h3>
             <div className="p-3 bg-ivory-50 dark:bg-forest-950 rounded-xl border border-ivory-200 dark:border-forest-800 text-forest-800 dark:text-sage-200">

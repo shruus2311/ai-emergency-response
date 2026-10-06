@@ -48,7 +48,7 @@ export const AdminDashboard: React.FC = () => {
           <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-forest-100 text-forest-800 dark:bg-forest-900 dark:text-sage-300 border border-forest-200 dark:border-forest-700">
             System Administration & Immutable Audit Trail
           </span>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-forest-950 dark:text-ivory-50 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-1">
             {t('navAdmin', 'Access Control (RBAC) & Audit Integrity')}
           </h1>
         </div>
@@ -66,7 +66,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl overflow-hidden shadow-sm p-5 space-y-4">
         <div className="flex items-center gap-2">
           <Users className="w-4 h-4 text-forest-700 dark:text-sage-300" />
-          <h2 className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider">
+          <h2 className="font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider">
             User Accounts & Role Permissions ({users.length})
           </h2>
         </div>
@@ -124,7 +124,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Lock className="w-4 h-4 text-forest-700 dark:text-sage-300" />
-            <h2 className="font-serif font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider">
+            <h2 className="font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider">
               Immutable System Audit Logs ({auditLogs.length} Events)
             </h2>
           </div>

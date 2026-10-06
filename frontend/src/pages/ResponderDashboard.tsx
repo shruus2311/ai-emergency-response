@@ -163,7 +163,7 @@ export const ResponderDashboard: React.FC = () => {
           <span className="text-xs font-mono font-bold text-forest-700 dark:text-sage-400 uppercase tracking-widest">
             {t('tacticalTerminal', 'Tactical Responder Field Terminal')}
           </span>
-          <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white font-serif mt-0.5">
+          <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white mt-0.5">
             {user?.full_name || 'Field Operative'}
           </h1>
           <p className="text-xs text-sage-700 dark:text-sage-400 mt-0.5">
@@ -202,7 +202,7 @@ export const ResponderDashboard: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
               <div>
                 <span className="font-mono font-bold text-forest-800 dark:text-sage-300">#{assignment.incident_number}</span>
-                <h3 className="text-base font-bold text-forest-950 dark:text-white font-serif mt-0.5">{assignment.title}</h3>
+                <h3 className="text-base font-bold text-forest-950 dark:text-white mt-0.5">{assignment.title}</h3>
                 <div className="text-sage-700 dark:text-sage-400 flex items-center gap-1.5 mt-1">
                   <MapPin className="w-3.5 h-3.5 text-sage-500" />
                   <span>{assignment.address}</span>

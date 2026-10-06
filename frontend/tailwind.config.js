@@ -100,9 +100,8 @@ export default {
         '4xl': '2rem',
       },
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        serif: ['Newsreader', 'Playfair Display', 'Merriweather', 'Georgia', 'serif'],
-        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        sans: ['Inter', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'Menlo', 'monospace'],
       },
       boxShadow: {
         'ref-sm': '0 1px 2px 0 rgba(0, 0, 0, 0.03)',

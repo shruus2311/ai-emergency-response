@@ -156,10 +156,10 @@ export const LandingPage: React.FC = () => {
               RESQINTEL AI • {t('govtHeader', 'National Emergency Operations & Public Safety Command')}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-forest-950 dark:text-ivory-50 mt-1 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-1 tracking-tight">
             {t('appTagline', 'Emergency Response Intelligence Platform')}
           </h1>
-          <p className="text-xs sm:text-sm font-serif italic text-forest-700 dark:text-sage-400 mt-0.5">
+          <p className="text-xs sm:text-sm italic text-forest-700 dark:text-sage-400 mt-0.5">
             “{t('appMission', 'From scattered emergency signals to coordinated action.')}”
           </p>
         </div>
@@ -252,7 +252,7 @@ export const LandingPage: React.FC = () => {
               <MapPin className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold font-serif text-forest-950 dark:text-ivory-50 uppercase tracking-wide">
+              <h2 className="text-sm font-bold text-forest-950 dark:text-ivory-50 uppercase tracking-wide">
                 {t('dashLiveSituationMap', 'LIVE SITUATION MAP')}
               </h2>
               <p className="text-[11px] text-sage-700 dark:text-sage-400">
@@ -287,7 +287,7 @@ export const LandingPage: React.FC = () => {
           <div className="flex items-center justify-between pb-3 border-b border-ivory-200 dark:border-forest-800">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              <h2 className="font-bold text-sm font-serif text-forest-950 dark:text-ivory-50 uppercase tracking-wider">
+              <h2 className="font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider">
                 {t('dashPriorityIncidents', 'PRIORITY INCIDENTS')}
               </h2>
             </div>
@@ -319,7 +319,7 @@ export const LandingPage: React.FC = () => {
                       <SeverityBadge severity={inc.severity_class} />
                       <StatusBadge status={inc.status} />
                     </div>
-                    <div className="font-bold text-sm text-forest-950 dark:text-ivory-50 font-serif">
+                    <div className="font-bold text-sm text-forest-950 dark:text-ivory-50 ">
                       {inc.title}
                     </div>
                     <div className="text-xs text-sage-700 dark:text-sage-400 flex items-center gap-1 font-sans">
@@ -350,7 +350,7 @@ export const LandingPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-ivory-200 dark:border-forest-800">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-forest-700 dark:text-sage-300" />
-                <h2 className="font-bold text-sm font-serif text-forest-950 dark:text-ivory-50 uppercase tracking-wider">
+                <h2 className="font-bold text-sm text-forest-950 dark:text-ivory-50 uppercase tracking-wider">
                   {t('dashRecentActivity', 'RECENT ACTIVITY')}
                 </h2>
               </div>

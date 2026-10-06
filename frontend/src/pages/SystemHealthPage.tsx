@@ -55,7 +55,7 @@ export const SystemHealthPage: React.FC = () => {
           <span className="text-xs font-mono font-bold text-forest-700 dark:text-sage-400 uppercase tracking-widest">
             {t('govtHeader', 'Platform Observability & Infrastructure Integrity')}
           </span>
-          <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white font-serif mt-1 flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white mt-1 flex items-center gap-2">
             <Activity className="w-6 h-6 text-forest-700 dark:text-sage-300" />
             Live System Component Health
           </h1>
@@ -82,7 +82,7 @@ export const SystemHealthPage: React.FC = () => {
               <span className="text-xs font-mono text-sage-700 dark:text-sage-400 uppercase tracking-wider block">
                 Primary Cluster Status
               </span>
-              <div className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-white mt-1 flex items-center gap-3 font-serif">
+              <div className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-white mt-1 flex items-center gap-3 ">
                 <span>ResQIntel Platform:</span>
                 <span className={healthData.system_status === 'ONLINE' ? 'text-forest-700 dark:text-sage-300 font-mono' : 'text-amber-800 dark:text-amber-400 font-mono'}>
                   {healthData.system_status}
@@ -108,7 +108,7 @@ export const SystemHealthPage: React.FC = () => {
                       <Server className="w-5 h-5 text-sage-600 dark:text-sage-400" />
                     )}
                     <div>
-                      <h3 className="font-bold text-sm text-forest-950 dark:text-white font-serif">{svc.name || key}</h3>
+                      <h3 className="font-bold text-sm text-forest-950 dark:text-white ">{svc.name || key}</h3>
                       <span className="text-[11px] font-mono text-sage-600 dark:text-sage-400">ID: {key}</span>
                     </div>
                   </div>

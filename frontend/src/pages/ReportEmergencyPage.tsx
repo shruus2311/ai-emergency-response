@@ -218,7 +218,7 @@ export const ReportEmergencyPage: React.FC = () => {
         <span className="text-xs font-mono font-bold text-forest-700 dark:text-sage-400 uppercase tracking-widest">
           {t('navCitizenPortal', 'Civilian Emergency Portal')}
         </span>
-        <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white font-serif flex items-center gap-2 mt-1">
+        <h1 className="text-xl sm:text-2xl font-bold text-forest-950 dark:text-white flex items-center gap-2 mt-1">
           <ShieldAlert className="w-6 h-6 text-forest-700 dark:text-sage-300" />
           {t('reportEmergencyHeading', 'Report an Emergency Incident')}
         </h1>
@@ -240,7 +240,7 @@ export const ReportEmergencyPage: React.FC = () => {
           <div className="flex items-center gap-3 text-forest-700 dark:text-sage-300">
             <CheckCircle className="w-8 h-8" />
             <div>
-              <h2 className="text-lg font-bold text-forest-950 dark:text-white font-serif">{t('reportReceivedAnalyzed', 'Emergency Report Received & Analyzed')}</h2>
+              <h2 className="text-lg font-bold text-forest-950 dark:text-white ">{t('reportReceivedAnalyzed', 'Emergency Report Received & Analyzed')}</h2>
               <p className="text-xs text-sage-700 dark:text-sage-400">
                 {t('tableRef', 'Incident Number')}: <span className="font-mono text-forest-950 dark:text-white font-bold">{aiResult.incident_number}</span>
               </p>

@@ -122,7 +122,7 @@ export const Navbar: React.FC<Props> = ({ onToggleCopilot, unreadCount = 0 }) =>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5 leading-none">
-                  <span className="font-bold text-base tracking-tight text-forest-950 dark:text-ivory-50 font-serif">
+                  <span className="font-bold text-base tracking-tight text-forest-950 dark:text-ivory-50 ">
                     ResQIntel
                   </span>
                   <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-forest-100 dark:bg-forest-850 text-forest-800 dark:text-sage-300 border border-forest-300 dark:border-forest-700">

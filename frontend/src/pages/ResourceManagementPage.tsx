@@ -65,7 +65,7 @@ export const ResourceManagementPage: React.FC = () => {
               Fleet Optimization & Asset Logistics
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-forest-950 dark:text-ivory-50 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-1">
             {t('navResources', 'Emergency Fleet & Rescue Units')}
           </h1>
           <p className="text-xs text-forest-700 dark:text-sage-400 mt-0.5">
@@ -100,7 +100,7 @@ export const ResourceManagementPage: React.FC = () => {
                 <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-ivory-200 text-forest-800 dark:bg-forest-950 dark:text-sage-300 border border-ivory-300 dark:border-forest-700">
                   {res.resource_type}
                 </span>
-                <h3 className="font-serif font-bold text-base text-forest-950 dark:text-ivory-50 mt-2">{res.resource_name}</h3>
+                <h3 className="font-bold text-base text-forest-950 dark:text-ivory-50 mt-2">{res.resource_name}</h3>
                 <div className="text-xs text-forest-600 dark:text-sage-400 flex items-center gap-1.5 mt-1">
                   <MapPin className="w-3.5 h-3.5 text-forest-500 dark:text-sage-500" />
                   <span>{res.station_name || 'Operational Depot'}</span>
@@ -129,7 +129,7 @@ export const ResourceManagementPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
-            <h2 className="font-serif font-bold text-xl text-forest-950 dark:text-ivory-50">Register Emergency Unit</h2>
+            <h2 className="font-bold text-xl text-forest-950 dark:text-ivory-50">Register Emergency Unit</h2>
             <form onSubmit={handleCreateResource} className="space-y-4 text-xs">
               <div>
                 <label className="block text-forest-800 dark:text-sage-300 font-semibold mb-1">Unit Name</label>

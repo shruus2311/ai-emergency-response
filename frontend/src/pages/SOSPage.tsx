@@ -50,7 +50,7 @@ export const SOSPage: React.FC = () => {
         High-Priority Emergency Distress Channel
       </div>
 
-      <h1 className="text-3xl sm:text-4xl font-serif font-bold text-forest-950 dark:text-ivory-50 tracking-tight mb-2">
+      <h1 className="text-3xl sm:text-4xl font-bold text-forest-950 dark:text-ivory-50 tracking-tight mb-2">
         Emergency SOS Beacon
       </h1>
       <p className="text-xs sm:text-sm text-forest-700 dark:text-sage-400 max-w-md mx-auto mb-8">
@@ -68,7 +68,7 @@ export const SOSPage: React.FC = () => {
           <div className="flex items-center gap-3 text-red-700 dark:text-red-400">
             <Radio className="w-8 h-8 animate-pulse text-red-600 dark:text-red-500" />
             <div>
-              <h2 className="text-lg font-serif font-bold text-forest-950 dark:text-ivory-50">Emergency SOS Active & Monitored</h2>
+              <h2 className="text-lg font-bold text-forest-950 dark:text-ivory-50">Emergency SOS Active & Monitored</h2>
               <p className="text-xs text-forest-600 dark:text-sage-400 font-mono">
                 Incident Ref: <span className="text-forest-950 dark:text-white font-bold">{sosResult.incident_number}</span>
               </p>

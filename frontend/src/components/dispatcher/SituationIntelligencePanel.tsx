@@ -137,7 +137,7 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
                 REAL-TIME FEEDS ACTIVE
               </span>
             </div>
-            <h2 className="text-base sm:text-lg font-serif font-bold text-forest-950 dark:text-ivory-50">
+            <h2 className="text-base sm:text-lg font-bold text-forest-950 dark:text-ivory-50">
               {t('lblExternalSignals', 'Proactive Situation Intelligence & External Signals')}
             </h2>
           </div>

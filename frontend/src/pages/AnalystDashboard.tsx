@@ -43,7 +43,7 @@ export const AnalystDashboard: React.FC = () => {
           <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-forest-100 text-forest-800 dark:bg-forest-900 dark:text-sage-300 border border-forest-200 dark:border-forest-700">
             Crisis Intelligence & Post-Incident Telemetry
           </span>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-forest-950 dark:text-ivory-50 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-1">
             {t('navAnalytics', 'Operational Intelligence & Analytics')}
           </h1>
           <p className="text-xs text-forest-700 dark:text-sage-400 mt-0.5">
@@ -77,7 +77,7 @@ export const AnalystDashboard: React.FC = () => {
               <span className="text-[11px] font-mono text-forest-600 dark:text-sage-400 uppercase tracking-wider block">
                 Total Documented Incidents
               </span>
-              <div className="text-2xl sm:text-3xl font-serif font-bold text-forest-950 dark:text-ivory-50 mt-1">
+              <div className="text-2xl sm:text-3xl font-bold text-forest-950 dark:text-ivory-50 mt-1">
                 {analytics.total_incidents}
               </div>
             </div>
@@ -86,7 +86,7 @@ export const AnalystDashboard: React.FC = () => {
               <span className="text-[11px] font-mono text-red-700 dark:text-red-400 uppercase tracking-wider block">
                 Total Reported Injuries
               </span>
-              <div className="text-2xl sm:text-3xl font-serif font-bold text-red-600 dark:text-red-400 mt-1">
+              <div className="text-2xl sm:text-3xl font-bold text-red-600 dark:text-red-400 mt-1">
                 {analytics.total_injuries}
               </div>
             </div>
@@ -95,7 +95,7 @@ export const AnalystDashboard: React.FC = () => {
               <span className="text-[11px] font-mono text-forest-600 dark:text-sage-400 uppercase tracking-wider block">
                 Recorded Fatalities
               </span>
-              <div className="text-2xl sm:text-3xl font-serif font-bold text-forest-900 dark:text-sage-200 mt-1">
+              <div className="text-2xl sm:text-3xl font-bold text-forest-900 dark:text-sage-200 mt-1">
                 {analytics.total_fatalities}
               </div>
             </div>
@@ -104,7 +104,7 @@ export const AnalystDashboard: React.FC = () => {
               <span className="text-[11px] font-mono text-blue-700 dark:text-blue-400 uppercase tracking-wider block">
                 Exposed / Displaced Persons
               </span>
-              <div className="text-2xl sm:text-3xl font-serif font-bold text-blue-600 dark:text-blue-300 mt-1">
+              <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-300 mt-1">
                 {analytics.total_affected}
               </div>
             </div>
@@ -115,7 +115,7 @@ export const AnalystDashboard: React.FC = () => {
             
             {/* Incident Types Distribution Chart */}
             <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4">
-              <h3 className="font-serif font-bold text-sm uppercase tracking-wider text-forest-950 dark:text-ivory-50 flex items-center gap-2">
+              <h3 className="font-bold text-sm uppercase tracking-wider text-forest-950 dark:text-ivory-50 flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-forest-600 dark:text-sage-400" />
                 Incident Distribution by Hazard Classification
               </h3>
@@ -137,7 +137,7 @@ export const AnalystDashboard: React.FC = () => {
 
             {/* Severity Distribution Pie Chart */}
             <div className="bg-ivory-50 dark:bg-forest-900/90 border border-ivory-300 dark:border-forest-800 rounded-xl p-5 shadow-sm space-y-4">
-              <h3 className="font-serif font-bold text-sm uppercase tracking-wider text-forest-950 dark:text-ivory-50 flex items-center gap-2">
+              <h3 className="font-bold text-sm uppercase tracking-wider text-forest-950 dark:text-ivory-50 flex items-center gap-2">
                 <PieIcon className="w-4 h-4 text-forest-600 dark:text-sage-400" />
                 Incident Severity Classification Spread
               </h3>

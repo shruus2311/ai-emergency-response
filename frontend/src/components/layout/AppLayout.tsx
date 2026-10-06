@@ -300,7 +300,7 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
           <div className="flex items-center gap-4">
             <Link to="/" className="flex flex-col">
               <div className="flex items-center gap-2">
-                <span className="text-base sm:text-lg font-serif font-bold text-ivory-50 tracking-tight">
+                <span className="text-base sm:text-lg font-bold text-ivory-50 tracking-tight">
                   ResQIntel <span className="text-sage-300 italic font-normal">AI</span>
                 </span>
                 <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-forest-800 border border-forest-700 text-sage-300 font-semibold tracking-wider">
@@ -469,7 +469,7 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
                   <Lock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-forest-950 dark:text-ivory-50 text-base font-serif leading-tight">
+                  <h3 className="font-bold text-forest-950 dark:text-ivory-50 text-base leading-tight">
                     Authentication Required
                   </h3>
                   <span className="text-[11px] text-forest-700 dark:text-sage-400 font-mono font-semibold">
