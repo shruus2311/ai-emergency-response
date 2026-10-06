@@ -4,13 +4,14 @@ import {
   Compass, Radio, ShieldAlert, Truck, BarChart3, Database, 
   Users, Activity, Bell, Bot, LogOut, Sun, Moon, Globe, 
   Search, Shield, AlertOctagon, FileText, Check, ChevronDown, 
-  UserCheck, Layers, Wifi, WifiOff, Sparkles
+  UserCheck, Layers, Wifi, WifiOff, Sparkles, Lock, X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { Language } from '../../context/translations';
 import { UserRole } from '../../types';
+import { api } from '../../services/api';
 
 interface Props {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ interface Props {
 }
 
 export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCount = 0 }) => {
-  const { user, logout, loginDemo, isAuthenticated } = useAuth();
+  const { user, logout, login, isAuthenticated } = useAuth();
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -29,6 +30,13 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
   const [showRoleMenu, setShowRoleMenu] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
 
+  // Authentication Required Modal State for Privileged Roles
+  const [authModalTargetRole, setAuthModalTargetRole] = useState<UserRole | null>(null);
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
+
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
     if (path !== '/' && location.pathname.startsWith(path)) return true;
@@ -36,21 +44,73 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
   };
 
   const roles: { role: UserRole; label: string; desc: string }[] = [
-    { role: 'DISPATCHER', label: 'Operations Dispatcher', desc: 'Incident triage & emergency unit dispatch' },
-    { role: 'RESPONDER', label: 'Field Tactical Unit', desc: 'Turn-by-turn routing & on-scene updates' },
-    { role: 'ANALYST', label: 'Intelligence Analyst', desc: 'USGS, GDACS, and risk assessment' },
-    { role: 'ADMIN', label: 'System Administrator', desc: 'Audit logging & infrastructure control' },
-    { role: 'CITIZEN', label: 'Civilian Portal', desc: 'Emergency distress reporting & offline SOS' },
+    { role: 'CITIZEN', label: 'Civilian Portal', desc: 'Emergency distress reporting & offline SOS (No Login Required)' },
+    { role: 'DISPATCHER', label: 'Operations Dispatcher', desc: 'Incident triage & emergency unit dispatch (Auth Required)' },
+    { role: 'RESPONDER', label: 'Field Tactical Unit', desc: 'Turn-by-turn routing & on-scene updates (Auth Required)' },
+    { role: 'ANALYST', label: 'Intelligence Analyst', desc: 'USGS, GDACS, and risk assessment (Auth Required)' },
+    { role: 'ADMIN', label: 'System Administrator', desc: 'Audit logging & infrastructure control (Auth Required)' },
   ];
 
-  const handleRoleSwitch = async (role: UserRole) => {
+  const handleRoleSwitch = (targetRole: UserRole) => {
     setShowRoleMenu(false);
-    await loginDemo(role);
-    if (role === 'CITIZEN') navigate('/citizen');
-    else if (role === 'RESPONDER') navigate('/responder');
-    else if (role === 'ANALYST') navigate('/analyst');
-    else if (role === 'ADMIN') navigate('/admin');
-    else navigate('/dispatcher');
+    setAuthError('');
+
+    // 1. Citizen does NOT require login
+    if (targetRole === 'CITIZEN') {
+      logout();
+      navigate('/citizen');
+      return;
+    }
+
+    // 2. If already authenticated and user's role matches or user is ADMIN
+    if (user && user.role !== 'CITIZEN' && (user.role === targetRole || user.role === 'ADMIN')) {
+      if (targetRole === 'RESPONDER') navigate('/responder');
+      else if (targetRole === 'ANALYST') navigate('/analyst');
+      else if (targetRole === 'ADMIN') navigate('/admin');
+      else navigate('/dispatcher');
+      return;
+    }
+
+    // 3. Otherwise, open the Authentication Required Modal
+    setAuthModalTargetRole(targetRole);
+    setAuthEmail('');
+    setAuthPassword('');
+  };
+
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!authModalTargetRole) return;
+    setAuthLoading(true);
+    setAuthError('');
+
+    try {
+      const res = await api.auth.login({ email: authEmail.trim(), password: authPassword });
+      
+      // RBAC validation: check if the authenticated user's role matches targetRole or is ADMIN
+      if (res.user.role !== authModalTargetRole && res.user.role !== 'ADMIN') {
+        setAuthError(`Access Denied: Account role '${res.user.role}' is not authorized for ${authModalTargetRole} access.`);
+        setAuthLoading(false);
+        return;
+      }
+
+      // Set authenticated session in context
+      await login({ email: authEmail.trim(), password: authPassword });
+
+      const target = authModalTargetRole;
+      setAuthModalTargetRole(null);
+      setAuthEmail('');
+      setAuthPassword('');
+
+      // Navigate to authorized dashboard
+      if (target === 'RESPONDER') navigate('/responder');
+      else if (target === 'ANALYST') navigate('/analyst');
+      else if (target === 'ADMIN') navigate('/admin');
+      else navigate('/dispatcher');
+    } catch (err: any) {
+      setAuthError(err.message || 'Incorrect email or password');
+    } finally {
+      setAuthLoading(false);
+    }
   };
 
   const languages: { code: Language; label: string; native: string }[] = [
@@ -271,14 +331,14 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
             {/* User Profile Card */}
             <div className="flex items-center gap-2.5 bg-forest-950/90 border border-forest-700/80 rounded-full px-3 py-1 text-ivory-100">
               <div className="w-6 h-6 rounded-full bg-forest-800 border border-forest-600 flex items-center justify-center text-ivory-50 font-bold text-[11px]">
-                {user?.full_name ? user.full_name.charAt(0) : 'U'}
+                {user && user.role !== 'CITIZEN' ? (user.full_name ? user.full_name.charAt(0) : 'U') : 'C'}
               </div>
               <div className="flex flex-col text-left">
                 <span className="text-[11px] font-bold text-ivory-50 leading-none">
-                  {user?.full_name || 'Emergency Operator'}
+                  {user && user.role !== 'CITIZEN' ? (user.full_name || 'Emergency Operator') : 'Citizen'}
                 </span>
-                <span className="text-[9px] text-sage-300 leading-tight">
-                  {user?.role || 'CITIZEN'}
+                <span className="text-[9px] text-sage-300 leading-tight font-mono uppercase font-semibold">
+                  {user && user.role !== 'CITIZEN' ? user.role : 'CITIZEN'}
                 </span>
               </div>
 
@@ -293,23 +353,26 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
 
             {/* Role Dropdown */}
             {showRoleMenu && (
-              <div className="absolute right-4 top-16 w-64 bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-700 rounded-2xl shadow-xl py-2 z-50 text-xs text-forest-950 dark:text-ivory-50">
+              <div className="absolute right-4 top-16 w-72 bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-700 rounded-2xl shadow-xl py-2 z-50 text-xs text-forest-950 dark:text-ivory-50">
                 <div className="px-3.5 py-1.5 border-b border-ivory-200 dark:border-forest-800 text-[10px] font-mono font-bold text-sage-700 dark:text-sage-400 uppercase tracking-wider">
-                  Select User Demonstration Role
+                  Select User Role
                 </div>
                 {roles.map((r) => (
                   <button
                     key={r.role}
                     onClick={() => handleRoleSwitch(r.role)}
-                    className={`w-full text-left px-3.5 py-2 hover:bg-ivory-200 dark:hover:bg-forest-800 transition-colors flex items-start justify-between ${
-                      user?.role === r.role ? 'bg-forest-100 dark:bg-forest-800 text-forest-900 dark:text-ivory-50 font-bold' : ''
+                    className={`w-full text-left px-3.5 py-2.5 hover:bg-ivory-200 dark:hover:bg-forest-800 transition-colors flex items-start justify-between ${
+                      (user?.role || 'CITIZEN') === r.role ? 'bg-forest-100 dark:bg-forest-800 text-forest-900 dark:text-ivory-50 font-bold' : ''
                     }`}
                   >
                     <div>
-                      <div className="font-bold text-xs">{r.label}</div>
+                      <div className="font-bold text-xs flex items-center gap-1.5">
+                        <span>{r.label}</span>
+                        {r.role !== 'CITIZEN' && <Lock className="w-3 h-3 text-sage-500" />}
+                      </div>
                       <div className="text-[10px] text-sage-600 dark:text-sage-400 mt-0.5">{r.desc}</div>
                     </div>
-                    {user?.role === r.role && <Check className="w-4 h-4 text-forest-700 dark:text-sage-300 mt-0.5" />}
+                    {(user?.role || 'CITIZEN') === r.role && <Check className="w-4 h-4 text-forest-700 dark:text-sage-300 mt-0.5" />}
                   </button>
                 ))}
               </div>
@@ -388,6 +451,94 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
         </main>
 
       </div>
+
+      {/* 4. Authentication Required Modal */}
+      {authModalTargetRole && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-ivory-50 dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-ivory-200 dark:border-forest-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-forest-100 dark:bg-forest-850 text-forest-800 dark:text-sage-300 border border-forest-200 dark:border-forest-700">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-forest-950 dark:text-ivory-50 text-base font-serif leading-tight">
+                    Authentication Required
+                  </h3>
+                  <span className="text-[11px] text-forest-700 dark:text-sage-400 font-mono font-semibold">
+                    Switch to {roles.find(r => r.role === authModalTargetRole)?.label || authModalTargetRole}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => { setAuthModalTargetRole(null); setAuthError(''); }}
+                className="text-sage-600 dark:text-sage-400 hover:text-forest-900 dark:hover:text-white p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-sage-800 dark:text-sage-300 leading-relaxed">
+              Authentication is required to access <strong className="text-forest-950 dark:text-ivory-50">{roles.find(r => r.role === authModalTargetRole)?.label || authModalTargetRole}</strong> operational controls and dispatch systems.
+            </p>
+
+            {authError && (
+              <div className="p-3 rounded-lg bg-red-100 dark:bg-red-950/80 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-300 text-xs flex items-center gap-2">
+                <AlertOctagon className="w-4 h-4 flex-shrink-0 text-red-600 dark:text-red-400" />
+                <span>{authError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleAuthSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block text-forest-900 dark:text-sage-300 font-bold uppercase tracking-wider mb-1">
+                  Username or Email
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  placeholder="e.g. dispatcher@resqintel.ai"
+                  className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded-lg p-2.5 text-forest-950 dark:text-white focus:outline-none focus:ring-1 focus:ring-forest-600 font-sans"
+                />
+              </div>
+
+              <div>
+                <label className="block text-forest-900 dark:text-sage-300 font-bold uppercase tracking-wider mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-ivory-50 dark:bg-forest-950 border border-ivory-300 dark:border-forest-800 rounded-lg p-2.5 text-forest-950 dark:text-white focus:outline-none focus:ring-1 focus:ring-forest-600 font-sans"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-ivory-200 dark:border-forest-800">
+                <button
+                  type="button"
+                  onClick={() => { setAuthModalTargetRole(null); setAuthError(''); }}
+                  className="px-4 py-2 bg-ivory-200 dark:bg-forest-850 hover:bg-ivory-300 dark:hover:bg-forest-800 text-forest-900 dark:text-sage-300 rounded font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={authLoading || !authEmail || !authPassword}
+                  className="px-5 py-2 bg-forest-800 hover:bg-forest-700 text-ivory-50 font-bold rounded transition-colors flex items-center gap-1.5 shadow disabled:opacity-40"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>{authLoading ? 'Authenticating...' : 'Authenticate'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );
