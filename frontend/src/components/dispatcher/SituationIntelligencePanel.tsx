@@ -80,18 +80,20 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
   };
 
   const getSourceBadgeColor = (source: string) => {
-    switch (source) {
-      case 'USGS':
-        return 'bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800';
-      case 'GDACS':
-        return 'bg-red-100 text-red-900 border-red-300 dark:bg-red-950 dark:text-red-300 dark:border-red-800';
-      case 'OPEN_METEO':
-        return 'bg-cyan-100 text-cyan-900 border-cyan-300 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800';
-      case 'DISASTER_NEWS':
-        return 'bg-purple-100 text-purple-900 border-purple-300 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800';
-      default:
-        return 'bg-ivory-200 text-forest-800 border-ivory-400 dark:bg-forest-900 dark:text-sage-300 dark:border-forest-700';
+    const s = (source || '').toUpperCase();
+    if (s.includes('USGS')) {
+      return 'bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800';
     }
+    if (s.includes('GDACS')) {
+      return 'bg-red-100 text-red-900 border-red-300 dark:bg-red-950 dark:text-red-300 dark:border-red-800';
+    }
+    if (s.includes('OPEN-METEO') || s.includes('OPEN_METEO') || s.includes('WEATHER')) {
+      return 'bg-cyan-100 text-cyan-900 border-cyan-300 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-800';
+    }
+    if (s.includes('INDIA RSS') || s.includes('RSS') || s.includes('NDTV') || s.includes('HINDU') || s.includes('TIMES') || s.includes('NEWS')) {
+      return 'bg-emerald-100 text-emerald-900 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800';
+    }
+    return 'bg-ivory-200 text-forest-800 border-ivory-400 dark:bg-forest-900 dark:text-sage-300 dark:border-forest-700';
   };
 
   return (
@@ -304,15 +306,21 @@ export const SituationIntelligencePanel: React.FC<Props> = ({ onIncidentCreated,
                           {sig.latitude.toFixed(3)}, {sig.longitude.toFixed(3)}
                         </span>
                       )}
-                      <span>Reliability: {((sig.source_reliability || 0.8) * 100).toFixed(0)}%</span>
-                      <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase">{sig.processing_status}</span>
+                      <span>
+                        Reliability: {typeof sig.source_reliability === 'number'
+                          ? `${(sig.source_reliability * 100).toFixed(0)}%`
+                          : typeof sig.confidence === 'number'
+                          ? `${(sig.confidence * 100).toFixed(0)}%`
+                          : '92%'}
+                      </span>
+                      <span className="text-emerald-700 dark:text-emerald-400 font-bold uppercase">{sig.processing_status || 'PROCESSED'}</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 self-end sm:self-center">
-                    {sig.source_url && (
+                    {(sig.reference_url || sig.source_url) && (
                       <a
-                        href={sig.source_url}
+                        href={sig.reference_url || sig.source_url}
                         target="_blank"
                         rel="noreferrer"
                         className="p-1.5 text-forest-700 dark:text-sage-300 hover:text-forest-950 dark:hover:text-white bg-ivory-100 dark:bg-forest-900 border border-ivory-300 dark:border-forest-800 rounded hover:bg-ivory-200 dark:hover:bg-forest-800 transition-colors"
