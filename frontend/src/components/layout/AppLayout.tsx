@@ -51,9 +51,18 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
     { role: 'ADMIN', label: 'System Administrator', desc: 'Audit logging & infrastructure control (Auth Required)' },
   ];
 
+  const closeAuthModal = () => {
+    setAuthModalTargetRole(null);
+    setAuthEmail('');
+    setAuthPassword('');
+    setAuthError('');
+  };
+
   const handleRoleSwitch = (targetRole: UserRole) => {
     setShowRoleMenu(false);
     setAuthError('');
+    setAuthEmail('');
+    setAuthPassword('');
 
     // 1. Citizen does NOT require login
     if (targetRole === 'CITIZEN') {
@@ -71,7 +80,7 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
       return;
     }
 
-    // 3. Otherwise, open the Authentication Required Modal
+    // 3. Otherwise, open the Authentication Required Modal with strictly empty fields
     setAuthModalTargetRole(targetRole);
     setAuthEmail('');
     setAuthPassword('');
@@ -97,9 +106,7 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
       await login({ email: authEmail.trim(), password: authPassword });
 
       const target = authModalTargetRole;
-      setAuthModalTargetRole(null);
-      setAuthEmail('');
-      setAuthPassword('');
+      closeAuthModal();
 
       // Navigate to authorized dashboard
       if (target === 'RESPONDER') navigate('/responder');
@@ -471,7 +478,7 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
                 </div>
               </div>
               <button
-                onClick={() => { setAuthModalTargetRole(null); setAuthError(''); }}
+                onClick={closeAuthModal}
                 className="text-sage-600 dark:text-sage-400 hover:text-forest-900 dark:hover:text-white p-1"
               >
                 <X className="w-5 h-5" />
@@ -489,13 +496,16 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
               </div>
             )}
 
-            <form onSubmit={handleAuthSubmit} className="space-y-3.5 text-xs">
+            <form onSubmit={handleAuthSubmit} autoComplete="off" className="space-y-3.5 text-xs">
               <div>
                 <label className="block text-forest-900 dark:text-sage-300 font-bold uppercase tracking-wider mb-1">
                   Username or Email
                 </label>
                 <input
                   type="text"
+                  name="auth_user_identity"
+                  id="auth_user_identity"
+                  autoComplete="username"
                   required
                   value={authEmail}
                   onChange={(e) => setAuthEmail(e.target.value)}
@@ -510,6 +520,9 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
                 </label>
                 <input
                   type="password"
+                  name="auth_user_credential"
+                  id="auth_user_credential"
+                  autoComplete="current-password"
                   required
                   value={authPassword}
                   onChange={(e) => setAuthPassword(e.target.value)}
@@ -521,7 +534,7 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-ivory-200 dark:border-forest-800">
                 <button
                   type="button"
-                  onClick={() => { setAuthModalTargetRole(null); setAuthError(''); }}
+                  onClick={closeAuthModal}
                   className="px-4 py-2 bg-ivory-200 dark:bg-forest-850 hover:bg-ivory-300 dark:hover:bg-forest-800 text-forest-900 dark:text-sage-300 rounded font-semibold transition-colors"
                 >
                   Cancel
