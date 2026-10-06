@@ -51,8 +51,8 @@ export const LoginPage: React.FC = () => {
         
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-xl bg-forest-800 text-ivory-50 dark:bg-forest-700 flex items-center justify-center mx-auto shadow-sm mb-3">
-            <Shield className="w-6 h-6" />
+          <div className="w-16 h-16 rounded-2xl bg-forest-900/90 dark:bg-forest-800 p-1.5 flex items-center justify-center mx-auto shadow-sm mb-3 border border-forest-700/60 overflow-hidden">
+            <img src="/logo.png" alt="ResQIntel AI Logo" className="w-full h-full object-contain" />
           </div>
           <h2 className="text-2xl font-bold text-forest-950 dark:text-ivory-50 tracking-wide">
             Sign In to ResQIntel AI

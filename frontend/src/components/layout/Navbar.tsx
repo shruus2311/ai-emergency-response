@@ -117,8 +117,8 @@ export const Navbar: React.FC<Props> = ({ onToggleCopilot, unreadCount = 0 }) =>
           {/* Brand Identity with Editorial Serif Accent */}
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded bg-forest-800 dark:bg-forest-700 flex items-center justify-center text-ivory-50 shadow-sm group-hover:scale-105 transition-transform border border-forest-600/30">
-                <ShieldAlert className="w-4 h-4 text-ivory-100" />
+              <div className="w-8 h-8 rounded-lg bg-forest-900/90 dark:bg-forest-800 flex items-center justify-center p-1 text-ivory-50 shadow-sm group-hover:scale-105 transition-transform border border-forest-600/30 overflow-hidden">
+                <img src="/logo.png" alt="ResQIntel AI" className="w-full h-full object-contain" />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5 leading-none">

@@ -143,10 +143,10 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
         <div className="flex flex-col items-center gap-6">
           <Link 
             to="/" 
-            className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-forest-800 hover:bg-forest-700 border border-forest-600/40 flex items-center justify-center text-ivory-50 shadow-md shadow-forest-950/50 hover:scale-105 transition-all"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-forest-900/90 hover:bg-forest-800 border border-forest-600/40 flex items-center justify-center p-1.5 text-ivory-50 shadow-md shadow-forest-950/50 hover:scale-105 transition-all overflow-hidden"
             title="ResQIntel AI"
           >
-            <ShieldAlert className="w-6 h-6 text-ivory-100" />
+            <img src="/logo.png" alt="ResQIntel AI Logo" className="w-full h-full object-contain rounded-xl" />
           </Link>
 
           {/* Navigation Icon Stack */}
@@ -298,18 +298,21 @@ export const AppLayout: React.FC<Props> = ({ children, onToggleCopilot, unreadCo
           
           {/* Left Brand & Title */}
           <div className="flex items-center gap-4">
-            <Link to="/" className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="text-base sm:text-lg font-bold text-ivory-50 tracking-tight">
-                  ResQIntel <span className="text-sage-300 italic font-normal">AI</span>
-                </span>
-                <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-forest-800 border border-forest-700 text-sage-300 font-semibold tracking-wider">
-                  GOVT OPS
+            <Link to="/" className="flex items-center gap-3 group">
+              <img src="/logo.png" alt="ResQIntel AI" className="w-8 h-8 rounded-lg object-contain bg-white/10 p-0.5 border border-forest-700/60 shadow-sm group-hover:scale-105 transition-transform" />
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="text-base sm:text-lg font-bold text-ivory-50 tracking-tight">
+                    ResQIntel <span className="text-sage-300 font-medium">AI</span>
+                  </span>
+                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-forest-800 border border-forest-700 text-sage-300 font-semibold tracking-wider">
+                    GOVT OPS
+                  </span>
+                </div>
+                <span className="text-[11px] text-sage-300 italic">
+                  “{t('appMission', 'From scattered emergency signals to coordinated action.')}”
                 </span>
               </div>
-              <span className="text-[11px] text-sage-300 italic">
-                “{t('appMission', 'From scattered emergency signals to coordinated action.')}”
-              </span>
             </Link>
           </div>
 
